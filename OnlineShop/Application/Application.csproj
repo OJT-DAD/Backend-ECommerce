@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <Folder Include="AllRoles\Histories\Commands\" />
-    <Folder Include="AllRoles\Histories\Queries\GetAllStoreHistory\" />
-    <Folder Include="AllRoles\Histories\Queries\GetAllUserHistory\" />
     <Folder Include="Common\Extensions\" />
     <Folder Include="Common\Security\" />
   </ItemGroup>

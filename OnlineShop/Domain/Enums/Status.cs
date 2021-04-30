@@ -8,6 +8,8 @@
         OnDelivery = 4,
         Arrived = 5,
         ItemReceived = 6,
-        PaymentSlipInvalid = 7
+        PaymentSlipInvalid = 7,
+        TransactionCancel = 8,
+        TransactionFailed = 9,
     }
 }

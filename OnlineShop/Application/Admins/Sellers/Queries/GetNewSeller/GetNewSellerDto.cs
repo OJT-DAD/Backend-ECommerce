@@ -9,5 +9,7 @@
         public string NPWP { get; set; }
         public string IdCardNumber { get; set; }
         public string DateRequest { get; set; }
+        public string DateApprovalResult { get; set; }
+        public string ApprovalResult { get; set; }
     }
 }
