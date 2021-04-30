@@ -49,17 +49,6 @@ namespace Application.Stores.Commands.CreateStore
             await _context.SaveChangesAsync(cancellationToken);
 
             return "Waiting for confirmation from admin";
-
-            /*            var entity = new Store
-                        {
-                            Name = request.Name,
-                            Description = request.Description,
-                            Address = request.Address,
-                            Contact = request.Contact
-                        };
-
-                        _context.Stores.Add(entity);
-                        return await _context.SaveChangesAsync(cancellationToken);*/
         }
     }
 }

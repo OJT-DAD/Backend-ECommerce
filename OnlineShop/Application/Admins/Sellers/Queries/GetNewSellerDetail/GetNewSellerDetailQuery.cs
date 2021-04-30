@@ -28,6 +28,26 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
             if (!_context.NewSellers.Any(x => x.Id == request.Id))
                 throw new NotFoundException(nameof(NewSeller), request.Id);
 
+            //Delete after 3 days
+            var newSellerAsset = _context.NewSellers
+               .Where(x => x.Id == request.Id)
+               .FirstOrDefault();
+
+            var maxDay = newSellerAsset.DateApprovalResult?.AddDays(3);
+
+            if (newSellerAsset.DateApprovalResult > maxDay)
+            {
+                _context.NewSellers.Remove(newSellerAsset);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new GetNewSellerDetailVm
+                {
+                    Details = null
+                };
+            }
+
+            //If < 3 days shows
             var asset = _context.NewSellers
                 .Where(x => x.Id == request.Id)
                 .Include(x => x.UserProperty);

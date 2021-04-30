@@ -11,61 +11,64 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
+namespace Application.AllRoles.Histories.Queries.GetAllUserHistory
 {
-    public class GetAllStoreHistoryQuery : IRequest<GetAllStoreHistoryVm>
+    public class GetAllUserHistoryQuery : IRequest<GetAllUserHistoryVm>
     {
-        public int StoreId { get; set; }
+        public int UserId { get; set; }
     }
 
-    public class GetAllStoreHistoryQueryHandler : IRequestHandler<GetAllStoreHistoryQuery, GetAllStoreHistoryVm>
+    public class GetAllUserHistoryQueryHandler : IRequestHandler<GetAllUserHistoryQuery, GetAllUserHistoryVm>
     {
         private readonly IApplicationDbContext _context;
 
-        public GetAllStoreHistoryQueryHandler(IApplicationDbContext context)
+        public GetAllUserHistoryQueryHandler(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<GetAllStoreHistoryVm> Handle(GetAllStoreHistoryQuery request, CancellationToken cancellationToken)
+        public async Task<GetAllUserHistoryVm> Handle(GetAllUserHistoryQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.Stores.Any(x => x.Id == request.StoreId))
-                throw new NotFoundException(nameof(Store), request.StoreId);
+            if (!_context.UserProperties.Any(x => x.Id == request.UserId))
+                throw new NotFoundException(nameof(UserProperty), request.UserId);
 
             var historyIndexAsset = _context.PurchaseHistoryIndexs
-                .Where(x => x.StoreId == request.StoreId);
+                .Where(x => x.UserPropertyId == request.UserId);
 
-            var storeAsset = _context.Stores
-                .Where(x => x.Id == request.StoreId)
-                .FirstOrDefault();
-
-            var indexDto = historyIndexAsset.Select(x => new GetAllStoreHistoryIndexDto
+            var indexDto = historyIndexAsset.Select(x => new GetAllUserHistoryIndexDto
             {
                 Id = x.Id,
-                StoreName = storeAsset.Name,
-                PaymentMethod = Payment(x.PaymentId, _context),
                 TotalTransactionPrice = TotalTransaction(x.Id, x.ShippingId, _context),
-                DateTransactionFinish = x.DateTransactionDone.ToString("yymmss"),
+                FullName = FullName(x.UserPropertyId, _context),
+                DateTransactionFinish = x.DateTransactionDone.ToString("yymmdd"),
                 Note = x.Note,
                 ShippingAddress = x.ShippingAddress,
-                StatusTransaction = x.Status,
-                UserData = UserData(x.UserPropertyId, _context),
+                Status = x.Status,
+                Payment = Payment(x.PaymentId, _context),
                 Shipping = Shipping(x.ShippingId, _context),
-                ListsItem = ListItem(x.Id, _context)
+                ListItem = ListItem(x.Id, _context)
             });
 
-            return new GetAllStoreHistoryVm
+            return new GetAllUserHistoryVm
             {
                 Histories = await indexDto.ToListAsync()
             };
         }
 
-        private IList<GetAllStoreHistoryDto> ListItem(int id, IApplicationDbContext context)
+        private string FullName(int userPropertyId, IApplicationDbContext context)
+        {
+            var userAsset = context.UserProperties
+                .Where(x => x.Id == userPropertyId)
+                .FirstOrDefault();
+            return userAsset.FirstName + " " + userAsset.LastName;
+        }
+
+        private IList<GetAllUserHistoryDto> ListItem(int id, IApplicationDbContext context)
         {
             var listItemAsset = context.PurchaseHistories
                 .Where(x => x.PurchaseHistoryIndexId == id);
 
-            var listItemDto = listItemAsset.Select(x => new GetAllStoreHistoryDto
+            var listItemDto = listItemAsset.Select(x => new GetAllUserHistoryDto
             {
                 ProductId = x.ProductId,
                 Quantity = x.Quantity,
@@ -73,7 +76,6 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
                 ProductImage = x.ImageUrl,
                 PricePerUnit = ToRupiah(Convert.ToInt32(x.UnitPrice)),
                 TotalPrice = ToRupiah(Convert.ToInt32(x.TotalPrice))
-
             });
 
             return listItemDto.ToList();
@@ -91,7 +93,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
 
             var value = 0;
 
-            foreach(var data in totalTransactionIndexAsset)
+            foreach (var data in totalTransactionIndexAsset)
             {
                 var a = value;
                 value = a + Convert.ToInt32(data.TotalPrice);
@@ -100,29 +102,14 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
             return ToRupiah(value + Convert.ToInt32(shippingCost));
         }
 
-        private GetAllStoreHistoryUserPropertyDto UserData(int userPropertyId, IApplicationDbContext context)
-        {
-            var userAsset = context.UserProperties
-                .Where(x => x.Id == userPropertyId)
-                .FirstOrDefault();
-
-            return new GetAllStoreHistoryUserPropertyDto
-            {
-                UserId = userPropertyId,
-                FullName = userAsset.FirstName + " " + userAsset.LastName,
-                UserName = userAsset.Username,
-                Email = userAsset.Email
-            };
-        }
-
-        private GetAllStoreHistoryShippingDto Shipping(int shippingId, IApplicationDbContext context)
+        private GetAllUserHistoryShippingDto Shipping(int shippingId, IApplicationDbContext context)
         {
             var shippingAsset = context.Shipments
                 .Where(x => x.Id == shippingId)
                 .Include(x => x.AvailableShipment)
                 .FirstOrDefault();
 
-            return new GetAllStoreHistoryShippingDto
+            return new GetAllUserHistoryShippingDto
             {
                 ShippingId = shippingId,
                 ShippingCost = ToRupiah(Convert.ToInt32(shippingAsset.AvailableShipment.ShipmentCost)),
@@ -130,14 +117,19 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
             };
         }
 
-        private string Payment(int paymentId, IApplicationDbContext context)
+        private GetAllUserHistoryPaymentDto Payment(int paymentId, IApplicationDbContext context)
         {
             var paymentAsset = context.Payments
                 .Where(x => x.Id == paymentId)
                 .Include(x => x.AvailableBank)
                 .FirstOrDefault();
 
-            return paymentAsset.AvailableBank.BankName;
+            return new GetAllUserHistoryPaymentDto
+            {
+                PaymentId = paymentId,
+                PaymentName = paymentAsset.AvailableBank.BankName,
+                BankAccountNumber = paymentAsset.BankAccountNumber
+            };
         }
 
         private static string ToRupiah(int price)
