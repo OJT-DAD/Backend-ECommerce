@@ -1,6 +1,8 @@
-﻿using Application.Products.Commands.AddNewProduct;
+﻿using Application.Common.Models;
+using Application.Products.Commands.AddNewProduct;
 using Application.Products.Commands.DeleteProduct;
 using Application.Products.Commands.UpdateProduct;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Sellers
 {
+    [Authorize(Roles = Role.Seller)]
     [Route("seller/product")]
     public class SellerProductController : ApiControllerBase
     {

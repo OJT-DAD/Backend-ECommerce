@@ -1,6 +1,8 @@
 ﻿using Application.Admins.Commands.Banks.CreateBank;
 using Application.Admins.Commands.Banks.DeleteBank;
 using Application.Admins.Queries.Banks.GetAllBank;
+using Application.Common.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Admin
 {
+    [Authorize(Roles = Role.Admin)]
     [Route("admin/bank")]
     public class AdminBankController : ApiControllerBase
     {

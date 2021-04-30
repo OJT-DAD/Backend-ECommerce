@@ -1,5 +1,7 @@
-﻿using Application.Sellers.Transactions.Commands.SetArrived;
+﻿using Application.Common.Models;
+using Application.Sellers.Transactions.Commands.SetArrived;
 using Application.Sellers.Transactions.Commands.SetOnDelivery;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Sellers
 {
+    [Authorize(Roles = Role.Seller)]
     [Route("seller/transaction")]
     public class SellerTransactionController : ApiControllerBase
     {

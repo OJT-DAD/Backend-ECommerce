@@ -1,7 +1,10 @@
 ﻿using Application.Admins.Commands.Sellers.AcceptNewSeller;
+using Application.Admins.Commands.Sellers.DeclineNewSeller;
 using Application.Admins.Queries.Sellers.GetNewSeller;
 using Application.Admins.Queries.Sellers.GetNewSellerDetail;
+using Application.Common.Models;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Admin
 {
+    [Authorize(Roles = Role.Admin)]
     [Route("admin/new-seller")]
     public class AdminSellerController : ApiControllerBase
     {
@@ -33,6 +37,17 @@ namespace OnlineShop.Controllers.Admin
             {
                 Id = id
             };
+            return await Mediator.Send(query);
+        }
+
+        [HttpPost("reject-new-seller/{id}")]
+        public async Task<string> RejectNewSeller(int id)
+        {
+            var query = new DeclineNewSellerCommand
+            {
+                NewSellerId = id
+            };
+
             return await Mediator.Send(query);
         }
     }

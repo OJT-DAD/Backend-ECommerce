@@ -1,11 +1,14 @@
-﻿using Application.Sellers.Shippings.Commands.ChooseShippingMethod;
+﻿using Application.Common.Models;
+using Application.Sellers.Shippings.Commands.ChooseShippingMethod;
 using Application.Sellers.Shippings.Commands.DeleteShippingMethod;
 using Application.Sellers.Shippings.Queries.GetShippingMethod;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers
 {
+    [Authorize(Roles = Role.Seller)]
     [Route("seller/shipping-method")]
     public class SellerShippingMethodController : ApiControllerBase
     {

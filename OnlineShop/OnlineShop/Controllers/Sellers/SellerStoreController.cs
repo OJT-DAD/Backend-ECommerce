@@ -1,5 +1,7 @@
-﻿using Application.Stores.Commands.DeleteStore;
+﻿using Application.Common.Models;
+using Application.Stores.Commands.DeleteStore;
 using Application.Stores.Commands.UpdateStore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Sellers
 {
+    [Authorize(Roles = Role.Seller)]
     [Route("seller/store")]
     public class SellerStoreController : ApiControllerBase
     {

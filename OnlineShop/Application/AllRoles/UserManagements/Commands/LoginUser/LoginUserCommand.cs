@@ -60,7 +60,8 @@ namespace Application.UserManagements.Commands.LoginUser
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Username = user.Username,
-                Token = tokenString
+                Token = tokenString,
+                Role = user.Role
             };
             // return basic user info and authentication token
             return entity;
