@@ -1,4 +1,5 @@
-﻿using Application.Sellers.Payments.Commands.ChoosePayment;
+﻿using Application.Common.Models;
+using Application.Sellers.Payments.Commands.ChoosePayment;
 using Application.Sellers.Payments.Commands.DeletePayment;
 using Application.Sellers.Payments.Queries.GetPayment;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers
 {
-    [Authorize(Roles = "Seller")]
+    [Authorize(Roles = Role.Seller)]
     [Route("seller/Payment")]
     public class SellerPaymentController : ApiControllerBase
     {

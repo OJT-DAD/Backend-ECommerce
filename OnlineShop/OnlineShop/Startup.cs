@@ -99,6 +99,7 @@ namespace OnlineShop
             .AllowAnyMethod());
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

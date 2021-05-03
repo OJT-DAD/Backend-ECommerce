@@ -42,9 +42,9 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
             foreach(var data in asset)
             {
                 RemoveMethod(data.Id, _context);
-
-                await _context.SaveChangesAsync(cancellationToken);
             }
+
+            await _context.SaveChangesAsync(cancellationToken);
 
             return new GetNewSellerVm
             {
@@ -66,7 +66,7 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
             }
         }
 
-        private string DateApprovalResult(DateTime? dateApprovalResult)
+        private static string DateApprovalResult(DateTime? dateApprovalResult)
         {
             if (dateApprovalResult != null)
             {

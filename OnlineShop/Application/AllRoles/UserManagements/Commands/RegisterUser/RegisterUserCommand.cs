@@ -32,7 +32,7 @@ namespace Application.UserManagements.Commands.RegisterUser
                 LastName = request.LastName,
                 Username = request.Username,
                 Email = request.Email,
-                Role = Role.User
+                Role = Role.Admin
             };
 
             var user = await _services.Create(model, request.Password, cancellationToken);
