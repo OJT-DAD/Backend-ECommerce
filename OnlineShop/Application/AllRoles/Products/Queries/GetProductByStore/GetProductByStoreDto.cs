@@ -1,6 +1,10 @@
-﻿namespace Application.Products.Queries.GetAllProduct
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Application.AllRoles.Products.Queries.GetProductByStore
 {
-    public class ProductDto
+    public class GetProductByStoreDto
     {
         public int ProductId { get; set; }
         public string Name { get; set; }

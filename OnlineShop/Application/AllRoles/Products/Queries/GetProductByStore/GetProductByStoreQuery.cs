@@ -7,27 +7,29 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Products.Queries.GetAllProduct
+namespace Application.AllRoles.Products.Queries.GetProductByStore
 {
-    public class GetAllProductQueries : IRequest<GetAllProductVm>
+    public class GetProductByStoreQuery : IRequest<GetProductByStoreVm>
     {
+        public int StoreId { get; set; }
     }
 
-    public class GetAllProductQueriesHandler : IRequestHandler<GetAllProductQueries, GetAllProductVm>
+    public class GetProductByStoreQueryHandler : IRequestHandler<GetProductByStoreQuery, GetProductByStoreVm>
     {
         private readonly IApplicationDbContext _context;
 
-        public GetAllProductQueriesHandler(IApplicationDbContext context)
+        public GetProductByStoreQueryHandler(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<GetAllProductVm> Handle(GetAllProductQueries request, CancellationToken cancellationToken)
+        public async Task<GetProductByStoreVm> Handle(GetProductByStoreQuery request, CancellationToken cancellationToken)
         {
             var asset = _context.Products
+                .Where(x => x.StoreId == request.StoreId)
                 .Include(x => x.Stock);
 
-            var dto = asset.Select(x => new ProductDto
+            var dto = asset.Select(x => new GetProductByStoreDto
             {
                 ProductId = x.Id,
                 Name = x.Name,
@@ -36,8 +38,8 @@ namespace Application.Products.Queries.GetAllProduct
                 Price = ToRupiah(x.Price),
                 StockProduct = x.Stock.StockProduct,
             });
-
-            return new GetAllProductVm {
+            return new GetProductByStoreVm
+            {
                 NumberOfProducts = asset.Count(),
                 Products = await dto.ToListAsync()
             };

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="AllRoles\Histories\Commands\" />
+    <Folder Include="AllRoles\Products\Queries\DashboardUser\" />
     <Folder Include="Common\Extensions\" />
     <Folder Include="Common\Security\" />
   </ItemGroup>

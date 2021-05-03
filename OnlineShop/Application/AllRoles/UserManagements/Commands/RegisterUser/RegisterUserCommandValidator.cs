@@ -33,11 +33,18 @@ namespace Application.AllRoles.UserManagements.Commands.RegisterUser
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("This field is required!")
-                .MaximumLength(200).WithMessage("Email must not exceed 200 characters.");
+                .MaximumLength(200).WithMessage("Email must not exceed 200 characters.")
+                .MustAsync(BeUniqueEmail).WithMessage("Email is alredy exist!");
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("This field is required!")
                 .MaximumLength(200).WithMessage("Password must not exceed 200 characters.");
+        }
+
+        private async Task<bool> BeUniqueEmail(string email, CancellationToken arg2)
+        {
+            return await _context.UserProperties
+                .AllAsync(x => x.Email != email);
         }
 
         public async Task<bool> BeUniqueUsername(string username, CancellationToken cancellationToken)

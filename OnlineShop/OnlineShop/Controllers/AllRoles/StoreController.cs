@@ -11,19 +11,19 @@ namespace OnlineShop.Controllers
     [Route("store")]
     public class StoreController : ApiControllerBase
     {
-        [HttpGet]
+        [HttpGet("get-all")]
         public async Task<GetAllStoreVm> GetAll()
         {
             return await Mediator.Send(new GetAllStoreQueries());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get-by-id/{id}")]
         public async Task<GetStoreByIdVm> GetById(int id)
         {
             return await Mediator.Send(new GetStoreByIdQuery { StoreId = id });
         }
 
-        [HttpPost]
+        [HttpPost("create-store")]
         public async Task<string> Add(CreateStoreCommand command)
         {
             return await Mediator.Send(command);
