@@ -32,9 +32,10 @@ namespace Application.Stores.Queries.GetStoreById
                 throw new NotFoundException(nameof(Store), request.StoreId);
 
             //Product Dto
-            var productAsset = _context.Products
+            var productAsset = await _context.Products
                 .Where(x => x.StoreId == request.StoreId)
-                .Include(x => x.Stock);
+                .Include(x => x.Stock)
+                .ToListAsync();
 
             var productDto = productAsset.Select(x => new GetStoreByIdProductDto
             {
@@ -57,7 +58,7 @@ namespace Application.Stores.Queries.GetStoreById
                 Address = storeAsset.Address,
                 Contact = storeAsset.Contact,
                 NumberOfProducts = _context.Products.Where(a => a.StoreId == request.StoreId).Count(),
-                Products = await productDto.ToListAsync()
+                Products =  productDto.ToList()
             };
 
             return new GetStoreByIdVm
