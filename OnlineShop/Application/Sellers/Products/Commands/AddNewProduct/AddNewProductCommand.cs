@@ -33,14 +33,18 @@ namespace Application.Products.Commands.AddNewProduct
 
         public async Task<int> Handle(AddNewProductCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.Now;
+
             var entity = new Product
             {
                 Name = request.Name,
                 Description = request.Description,
                 ImageUrl = await SaveImage(request.ImageUrl),
                 Price = request.Price,
-                StoreId = request.StoreId
+                StoreId = request.StoreId,
+                DateAddedOrUpdated = now
             };
+
             _context.Products.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
 

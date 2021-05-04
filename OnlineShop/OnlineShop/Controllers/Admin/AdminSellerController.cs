@@ -2,6 +2,7 @@
 using Application.Admins.Commands.Sellers.DeclineNewSeller;
 using Application.Admins.Queries.Sellers.GetNewSeller;
 using Application.Admins.Queries.Sellers.GetNewSellerDetail;
+using Application.Admins.Sellers.Queries.GetSellerActive;
 using Application.Common.Models;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +18,12 @@ namespace OnlineShop.Controllers.Admin
     [Route("admin/new-seller")]
     public class AdminSellerController : ApiControllerBase
     {
+        [HttpGet("get-all-active-seller")]
+        public async Task<GetSellerActiveVm> GetActiveSeller()
+        {
+            return await Mediator.Send(new GetSellerActiveQuery());
+        }
+
         [HttpGet("get-new-seller")]
         public async Task<GetNewSellerVm> GetNewSeller()
         {

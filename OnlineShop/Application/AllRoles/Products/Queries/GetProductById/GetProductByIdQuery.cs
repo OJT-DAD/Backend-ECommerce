@@ -40,6 +40,7 @@ namespace Application.AllRoles.Products.Queries.GetProductById
             var productDto = new GetProductByIdDto
             {
                 ProductId = productAsset.Id,
+                StoreId = productAsset.StoreId,
                 ProductName = productAsset.Name,
                 Description = productAsset.Description,
                 ImageUrl = productAsset.ImageUrl,

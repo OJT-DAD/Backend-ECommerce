@@ -35,6 +35,8 @@ namespace Application.Products.Commands.UpdateProduct
 
         public async Task<int> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
+            var now = DateTime.Now;
+
             var productAsset = await _context.Products.FindAsync(request.Id);
             var stockAsset = await _context.Stocks.Where(x => x.ProductId == request.Id).FirstOrDefaultAsync();
 
@@ -51,6 +53,8 @@ namespace Application.Products.Commands.UpdateProduct
                 productAsset.Price = request.Price;
             if (request.StockProduct != 0)
                 stockAsset.StockProduct = request.StockProduct;
+
+            productAsset.DateAddedOrUpdated = now;
 
             return await _context.SaveChangesAsync(cancellationToken);
         }
