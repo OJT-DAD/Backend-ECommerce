@@ -38,6 +38,8 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
                 0 => productAsset.OrderBy(x => x.DateAddedOrUpdated),
                 SortingProperties.SortByName => productAsset.OrderBy(x => x.Name),
                 SortingProperties.SortByDescendingDate => productAsset.OrderByDescending(x => x.DateAddedOrUpdated),
+                SortingProperties.SortByPrice => productAsset.OrderBy(x => x.Price),
+                SortingProperties.SortByDescendingPrice => productAsset.OrderByDescending(x => x.Price),
                 _ => null,
             };
 
@@ -54,8 +56,12 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
 
             return new DashboardUserVm
             {
-                Lists = await productDto
-                    .PaginatedListAsync(request.PageNumber, request.PageSize)
+                SortBy = Enum.GetValues(typeof(SortingProperties))
+                    .Cast<SortingProperties>()
+                    .Select(x => new SortingPropertiesDto { Value = (int)x, Name = x.ToString() })
+                    .ToList(),
+                    
+                Lists = await productDto.ToListAsync()
             };
         }
     }
