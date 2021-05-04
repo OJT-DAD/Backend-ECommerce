@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities
+﻿using System;
+
+namespace Domain.Entities
 {
     public class Product
     {
@@ -9,6 +11,7 @@
         public decimal Price { get; set; }
         public virtual Store Store { get; set; }
         public int StoreId { get; set; }
+        public DateTime DateAddedOrUpdated { get; set; }
         public Stock Stock { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -45,9 +46,9 @@ namespace Application.Carts.Queries.GetCartDetail
                 Id = x.Id,
                 ProductId = x.ProductId,
                 ProductName = ProductAsset(x.ProductId, _context).Name,
-                ProductPrice = ToRupiah(Convert.ToInt32(ProductAsset(x.ProductId, _context).Price)),
+                ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(ProductAsset(x.ProductId, _context).Price)),
                 Quantity = x.Quantity,
-                TotalPrice = ToRupiah(x.TotalPrice)
+                TotalPrice = ConvertRupiah.ConvertToRupiah(x.TotalPrice)
             });
 
 
@@ -69,8 +70,8 @@ namespace Application.Carts.Queries.GetCartDetail
             {
                 Id = request.CartIndexId,
                 StoreName = cartIndexAsset.Store.Name,
-                ShippingCost = ToRupiah(shippingCost),
-                TotalCartPrice = ToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
+                ShippingCost = ConvertRupiah.ConvertToRupiah(shippingCost),
+                TotalCartPrice = ConvertRupiah.ConvertToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
                 Lists = await cartDto.ToListAsync()
             };
 
@@ -102,11 +103,6 @@ namespace Application.Carts.Queries.GetCartDetail
             }
 
             return totalCartPrice + Convert.ToInt32(shippingCost);
-        }
-
-        private static string ToRupiah(int price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
         }
     }
 }

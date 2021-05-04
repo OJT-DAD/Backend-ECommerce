@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,8 +25,9 @@ namespace Application.Products.Queries.GetAllProduct
 
         public async Task<GetAllProductVm> Handle(GetAllProductQueries request, CancellationToken cancellationToken)
         {
-            var asset = _context.Products
-                .Include(x => x.Stock);
+            var asset = await _context.Products
+                .Include(x => x.Stock)
+                .ToListAsync();
 
             var dto = asset.Select(x => new ProductDto
             {
@@ -33,19 +35,14 @@ namespace Application.Products.Queries.GetAllProduct
                 Name = x.Name,
                 Description = x.Description,
                 ImageUrl = x.ImageUrl,
-                Price = ToRupiah(x.Price),
+                Price = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.Price)),
                 StockProduct = x.Stock.StockProduct,
             });
 
             return new GetAllProductVm {
                 NumberOfProducts = asset.Count(),
-                Products = await dto.ToListAsync()
+                Products = dto.ToList()
             };
-        }
-
-        private static string ToRupiah(decimal price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", Convert.ToInt32(price));
         }
     }
 }
