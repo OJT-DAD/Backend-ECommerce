@@ -55,7 +55,7 @@ namespace Application.Sellers.PaymentSlips.Queries.GetSellerPaymentSlip
 
             return new GetSellerPaymentSlipVm
             {
-                PaymentSlips =  indexDto.ToList()
+                PaymentSlips = indexDto.ToList()
             };
         }
 
