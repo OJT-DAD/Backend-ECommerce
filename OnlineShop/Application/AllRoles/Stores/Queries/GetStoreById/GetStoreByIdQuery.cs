@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,8 @@ namespace Application.Stores.Queries.GetStoreById
 
         public async Task<GetStoreByIdVm> Handle(GetStoreByIdQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.Stores.Any(x => x.Id == request.StoreId))
+            var validationExist = await _context.Stores.AnyAsync(x => x.Id == request.StoreId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Store), request.StoreId);
 
             //Product Dto
@@ -43,7 +45,7 @@ namespace Application.Stores.Queries.GetStoreById
                 ProductName = x.Name,
                 ProductImageUrl = x.ImageUrl,
                 ProductDescription = x.Description,
-                ProductPrice = ToRupiah(Convert.ToInt32(x.Price)),
+                ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.Price)),
                 ProductStock = x.Stock.StockProduct,
             });
 
@@ -57,7 +59,7 @@ namespace Application.Stores.Queries.GetStoreById
                 Description = storeAsset.Description,
                 Address = storeAsset.Address,
                 Contact = storeAsset.Contact,
-                NumberOfProducts = _context.Products.Where(a => a.StoreId == request.StoreId).Count(),
+                NumberOfProducts = await _context.Products.Where(a => a.StoreId == request.StoreId).CountAsync(),
                 Products =  productDto.ToList()
             };
 
@@ -65,10 +67,6 @@ namespace Application.Stores.Queries.GetStoreById
             {
                 Store = storeDto
             };
-        }
-        private static string ToRupiah(int price) 
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
         }
     }
 }

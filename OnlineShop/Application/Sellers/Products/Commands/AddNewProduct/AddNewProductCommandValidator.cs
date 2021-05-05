@@ -1,4 +1,4 @@
-﻿using Application.Products.Commands.AddNewProduct;
+﻿/*using Application.Products.Commands.AddNewProduct;
 using FluentValidation;
 
 namespace Application.Sellers.Products.Commands.AddNewProduct
@@ -20,4 +20,4 @@ namespace Application.Sellers.Products.Commands.AddNewProduct
                 .NotEmpty().WithMessage("This field is required!");
         }
     }
-}
+}*/

@@ -29,11 +29,13 @@ namespace Application.AllRoles.Histories.Queries.GetAllUserHistory
 
         public async Task<GetAllUserHistoryVm> Handle(GetAllUserHistoryQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.UserProperties.Any(x => x.Id == request.UserId))
+            var validationExist = await _context.UserProperties.AnyAsync(x => x.Id == request.UserId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(UserProperty), request.UserId);
 
-            var historyIndexAsset = _context.PurchaseHistoryIndexs
-                .Where(x => x.UserPropertyId == request.UserId);
+            var historyIndexAsset = await _context.PurchaseHistoryIndexs
+                .Where(x => x.UserPropertyId == request.UserId)
+                .ToListAsync();
 
             var indexDto = historyIndexAsset.Select(x => new GetAllUserHistoryIndexDto
             {
@@ -51,7 +53,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllUserHistory
 
             return new GetAllUserHistoryVm
             {
-                Histories = await indexDto.ToListAsync()
+                Histories = indexDto.ToList()
             };
         }
 

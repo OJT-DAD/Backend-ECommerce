@@ -30,22 +30,23 @@ namespace Application.Sellers.PaymentSlips.Queries.GetSellerPaymentSlip
 
         public async Task<GetSellerPaymentSlipVm> Handle(GetSellerPaymentSlipQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.Stores.Any(x => x.Id == request.StoreId))
+            var validationExist = await _context.Stores.AnyAsync(x => x.Id == request.StoreId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Store), request.StoreId);
             
             //Selecting Index
-            var transactionIndexAsset = _context.TransactionIndexs
+            var transactionIndexAsset = await _context.TransactionIndexs
                 .Where(x => x.StoreId == request.StoreId)
                 .Where(x => x.Status == Status.WaitingForConfirmation)
                 .Include(x => x.UserProperty)
-                .Include(x => x.Store);
+                .Include(x => x.Store)
+                .ToListAsync();
 
             var indexDto = transactionIndexAsset.Select(x => new GetSellerPaymentSlipDto
             {
                 TransactionId = x.Id,
                 UserName = x.UserProperty.FirstName + " " + x.UserProperty.LastName,
                 PaymentMethod = PaymentAsset(x.PaymentId, _context),
-                /*TotalTransactionPrice*/
                 PaymentSlip = PaymentSlipAsset(x.Id, _context),
                 StoreName = x.Store.Name,
                 ShippingMethod = ShippingAsset(x.ShipmentId, _context),
@@ -54,7 +55,7 @@ namespace Application.Sellers.PaymentSlips.Queries.GetSellerPaymentSlip
 
             return new GetSellerPaymentSlipVm
             {
-                PaymentSlips = await indexDto.ToListAsync()
+                PaymentSlips =  indexDto.ToList()
             };
         }
 

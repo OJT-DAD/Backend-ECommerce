@@ -23,8 +23,9 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
 
         public async Task<GetNewSellerVm> Handle(GetNewSellerQuery request, CancellationToken cancellationToken)
         {
-            var asset = _context.NewSellers
-                .Include(x => x.UserProperty);
+            var asset = await _context.NewSellers
+                .Include(x => x.UserProperty)
+                .ToListAsync();
 
             var dto = asset.Select(x => new GetNewSellerDto
             {
@@ -34,7 +35,7 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
                 Email = x.UserProperty.Email,
                 NPWP = x.NPWP,
                 IdCardNumber = x.IdCardNumber,
-                DateRequest = x.DateRequest.ToString("dd"),
+                DateRequest = x.DateRequest.ToString("dd-mm-yyyy"),
                 DateApprovalResult = DateApprovalResult(x.DateApprovalResult),
                 ApprovalResult = x.ApprovalResult,
             });
@@ -48,7 +49,7 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
 
             return new GetNewSellerVm
             {
-                Lists = await dto.ToListAsync()
+                Lists = dto.ToList()
             };
         }
 

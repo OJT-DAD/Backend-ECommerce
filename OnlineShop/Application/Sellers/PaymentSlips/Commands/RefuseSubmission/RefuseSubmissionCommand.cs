@@ -29,7 +29,8 @@ namespace Application.Sellers.PaymentSlips.Commands.RefuseSubmission
 
         public async Task<string> Handle(RefuseSubmissionCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.TransactionIndexs.Any(x => x.Id == request.TransactionIndexId))
+            var validationExist = await _context.TransactionIndexs.AnyAsync(x => x.Id == request.TransactionIndexId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(TransactionIndex), request.TransactionIndexId);
 
             //Changes Status to invalid

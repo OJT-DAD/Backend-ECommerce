@@ -25,13 +25,14 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
 
         public async Task<GetNewSellerDetailVm> Handle(GetNewSellerDetailQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.NewSellers.Any(x => x.Id == request.Id))
+            var validationExist = await _context.NewSellers.AnyAsync(x => x.Id == request.Id);
+            if (!validationExist)
                 throw new NotFoundException(nameof(NewSeller), request.Id);
 
             //Delete after 3 days
-            var newSellerAsset = _context.NewSellers
+            var newSellerAsset = await _context.NewSellers
                .Where(x => x.Id == request.Id)
-               .FirstOrDefault();
+               .FirstOrDefaultAsync();
 
             var maxDay = newSellerAsset.DateApprovalResult?.AddDays(3);
 
@@ -48,9 +49,10 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
             }
 
             //If < 3 days shows
-            var asset = _context.NewSellers
+            var asset = await _context.NewSellers
                 .Where(x => x.Id == request.Id)
-                .Include(x => x.UserProperty);
+                .Include(x => x.UserProperty)
+                .ToListAsync();
 
             var dto = asset.Select(x => new GetNewSellerDetailDto
             {
@@ -65,12 +67,12 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
                 StoreDescription = x.StoreDescription,
                 StoreAddress = x.StoreAddress,
                 StoreContact = x.StoreContact,
-                DateRequest = x.DateRequest.ToString("dd")
+                DateRequest = x.DateRequest.ToString("dd-mm-yyyy")
             });
 
             return new GetNewSellerDetailVm
             {
-                Details = await dto.FirstOrDefaultAsync()
+                Details = dto.FirstOrDefault()
             };
         }
     }

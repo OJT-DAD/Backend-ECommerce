@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -32,12 +33,13 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
             if (!_context.Stores.Any(x => x.Id == request.StoreId))
                 throw new NotFoundException(nameof(Store), request.StoreId);
 
-            var historyIndexAsset = _context.PurchaseHistoryIndexs
-                .Where(x => x.StoreId == request.StoreId);
+            var historyIndexAsset = await _context.PurchaseHistoryIndexs
+                .Where(x => x.StoreId == request.StoreId)
+                .ToListAsync();
 
-            var storeAsset = _context.Stores
+            var storeAsset = await _context.Stores
                 .Where(x => x.Id == request.StoreId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             var indexDto = historyIndexAsset.Select(x => new GetAllStoreHistoryIndexDto
             {
@@ -56,7 +58,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
 
             return new GetAllStoreHistoryVm
             {
-                Histories = await indexDto.ToListAsync()
+                Histories = indexDto.ToList()
             };
         }
 
@@ -71,8 +73,8 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
                 Quantity = x.Quantity,
                 ProductName = x.ProductName,
                 ProductImage = x.ImageUrl,
-                PricePerUnit = ToRupiah(Convert.ToInt32(x.UnitPrice)),
-                TotalPrice = ToRupiah(Convert.ToInt32(x.TotalPrice))
+                PricePerUnit = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.UnitPrice)),
+                TotalPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.TotalPrice))
 
             });
 
@@ -97,7 +99,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
                 value = a + Convert.ToInt32(data.TotalPrice);
             }
 
-            return ToRupiah(value + Convert.ToInt32(shippingCost));
+            return ConvertRupiah.ConvertToRupiah(value + Convert.ToInt32(shippingCost));
         }
 
         private GetAllStoreHistoryUserPropertyDto UserData(int userPropertyId, IApplicationDbContext context)
@@ -125,7 +127,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
             return new GetAllStoreHistoryShippingDto
             {
                 ShippingId = shippingId,
-                ShippingCost = ToRupiah(Convert.ToInt32(shippingAsset.AvailableShipment.ShipmentCost)),
+                ShippingCost = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(shippingAsset.AvailableShipment.ShipmentCost)),
                 ShippingMethodName = shippingAsset.AvailableShipment.ShipmentName
             };
         }
@@ -140,9 +142,5 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
             return paymentAsset.AvailableBank.BankName;
         }
 
-        private static string ToRupiah(int price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
-        }
     }
 }

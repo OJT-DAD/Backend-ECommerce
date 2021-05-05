@@ -47,7 +47,7 @@ namespace Application.Admins.Sellers.Queries.GetSellerActive
             };
         }
 
-        private int ProductAsset(int id, IApplicationDbContext context)
+        private static int ProductAsset(int id, IApplicationDbContext context)
         {
             return context.Products
                 .Where(x => x.StoreId == id)

@@ -14,8 +14,6 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
 {
     public class DashboardUserQuery : IRequest<DashboardUserVm>
     {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
         public SortingProperties Sort { get; set; }
     }
 

@@ -28,12 +28,14 @@ namespace Application.Sellers.Payments.Queries.GetPayment
 
         public async Task<GetPaymentVm> Handle(GetPaymentQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.Stores.Any(x => x.Id == request.StoreId))
+            var validationExist = await _context.Stores.AnyAsync(x => x.Id == request.StoreId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Store), request.StoreId);
 
-            var asset = _context.Payments
+            var asset = await _context.Payments
                 .Where(x => x.StoreId == request.StoreId)
-                .Include(x => x.AvailableBank);
+                .Include(x => x.AvailableBank)
+                .ToListAsync();
 
             var dto = asset.Select(x => new GetPaymentDto
             {
@@ -45,7 +47,7 @@ namespace Application.Sellers.Payments.Queries.GetPayment
             return new GetPaymentVm
             {
                 PaymentsCount = asset.Count(),
-                Payments = await dto.ToListAsync()
+                Payments = dto.ToList()
             };
         }
     }

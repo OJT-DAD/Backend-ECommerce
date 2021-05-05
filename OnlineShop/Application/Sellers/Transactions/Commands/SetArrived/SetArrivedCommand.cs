@@ -3,6 +3,7 @@ using Application.Common.Interfaces;
 using Domain.Entities;
 using Domain.Enums;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,8 @@ namespace Application.Sellers.Transactions.Commands.SetArrived
 
         public async Task<string> Handle(SetArrivedCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.TransactionIndexs.Any(x => x.Id == request.TransactionIndexId))
+            var validationExist = await _context.TransactionIndexs.AnyAsync(x => x.Id == request.TransactionIndexId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(TransactionIndex), request.TransactionIndexId);
 
             var transactionIndexAsset = await _context.TransactionIndexs.FindAsync(request.TransactionIndexId);

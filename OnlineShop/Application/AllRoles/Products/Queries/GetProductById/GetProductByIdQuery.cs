@@ -29,7 +29,8 @@ namespace Application.AllRoles.Products.Queries.GetProductById
 
         public async Task<GetProductByIdVm> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.Products.Any(x => x.Id == request.ProductId))
+            var validationExist = await _context.Products.AnyAsync(x => x.Id == request.ProductId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Product), request.ProductId);
 
             var productAsset = await _context.Products

@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,30 +30,27 @@ namespace Application.Sellers.Shippings.Queries.GetShippingMethod
 
         public async Task<GetShippingMethodVm> Handle(GetShippingMethodQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.Stores.Any(x => x.Id == request.StoreId))
+            var validationExist = await _context.Stores.AnyAsync(x => x.Id == request.StoreId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Store), request.StoreId);
 
-            var asset = _context.Shipments
+            var asset = await _context.Shipments
                 .Where(x => x.StoreId == request.StoreId)
-                .Include(x => x.AvailableShipment);
+                .Include(x => x.AvailableShipment)
+                .ToListAsync();
 
             var dto = asset.Select(x => new GetShippingMethodDto
             {
                 Id = x.Id,
                 ShippingName = x.AvailableShipment.ShipmentName,
-                ShippingCost = ToRupiah(Convert.ToInt32(x.AvailableShipment.ShipmentCost))
+                ShippingCost = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.AvailableShipment.ShipmentCost))
             });
 
             return new GetShippingMethodVm
             {
                 ShippingMethodCount = asset.Count(),
-                ShippingMethods = await dto.ToListAsync()
+                ShippingMethods = dto.ToList()
             };
-        }
-
-        private static string ToRupiah(int price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
         }
     }
 }

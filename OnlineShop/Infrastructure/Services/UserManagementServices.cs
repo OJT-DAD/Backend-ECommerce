@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.UserManagements.Commands.LoginUser;
 using Application.UserManagements.Commands.UpdateUser;
 using Application.UserManagements.Queries.GetUserById;
 using AutoMapper;
@@ -135,7 +136,8 @@ namespace Infrastructure.Services
                 LastName = userParam.LastName,
                 Username = userParam.Username,
                 Email = userParam.Email,
-                Password = password
+                Password = password,
+                Role = userParam.Role
             };
 
             return model;
