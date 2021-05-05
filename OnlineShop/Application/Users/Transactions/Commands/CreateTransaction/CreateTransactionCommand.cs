@@ -59,14 +59,14 @@ namespace Application.Transactions.Commands.CreateTransaction
             await _context.SaveChangesAsync(cancellationToken);
 
             //Moving Cart to Transaction Method
-            var count = _context.Carts
+            var count = await _context.Carts
                 .Where(x => x.CartIndexId == indexAsset.Id)
-                .Count();
+                .CountAsync();
 
-            var index = _context.TransactionIndexs
+            var index = await _context.TransactionIndexs
                 .Where(x => x.UserPropertyId == indexAsset.UserPropertyId)
                 .OrderByDescending(x => x.Id)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             //Loop for multiple data
             while (count > 0)

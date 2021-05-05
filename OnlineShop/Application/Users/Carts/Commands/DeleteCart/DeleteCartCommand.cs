@@ -28,7 +28,8 @@ namespace Application.Carts.Commands.DeleteCart
 
         public async Task<string> Handle(DeleteCartCommand request, CancellationToken cancellationToken)
         {
-            if(!_context.Carts.Any(x => x.Id == request.Id))
+            var validationExist = await _context.Carts.AnyAsync(x => x.Id == request.Id);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Cart), request.Id);
 
             var entity = await _context.Carts.FindAsync(request.Id);
@@ -45,9 +46,9 @@ namespace Application.Carts.Commands.DeleteCart
                 .Where(x => x.StoreId == store.StoreId)
                 .FirstOrDefaultAsync();
 
-            var cartCount = _context.Carts
+            var cartCount = await _context.Carts
                 .Where(x => x.CartIndexId == entity.CartIndexId)
-                .Count();
+                .CountAsync();
 
             if (cartCount <= 1)
                 _context.CartIndexs.Remove(deleteIndexCart);

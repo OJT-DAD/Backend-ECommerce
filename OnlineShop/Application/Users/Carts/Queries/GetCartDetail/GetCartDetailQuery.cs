@@ -30,7 +30,8 @@ namespace Application.Carts.Queries.GetCartDetail
 
         public async Task<GetCartDetailVm>  Handle(GetCartDetailQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.CartIndexs.Any(x => x.Id == request.CartIndexId))
+            var validationExist = await _context.CartIndexs.AnyAsync(x => x.Id == request.CartIndexId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(CartIndex), request.CartIndexId);
 
             var cartIndexAsset = await _context.CartIndexs
@@ -38,8 +39,9 @@ namespace Application.Carts.Queries.GetCartDetail
                 .Include(x => x.Store)
                 .FirstOrDefaultAsync();
 
-            var cartListAsset = _context.Carts
-                .Where(x => x.CartIndexId == request.CartIndexId);
+            var cartListAsset = await _context.Carts
+                .Where(x => x.CartIndexId == request.CartIndexId)
+                .ToListAsync();
 
             var cartDto = cartListAsset.Select(x => new GetCartDetailDto
             {
@@ -55,10 +57,10 @@ namespace Application.Carts.Queries.GetCartDetail
             //Shipping Cost Value
             var shippingCost = 0;
 
-            var shippingAsset = _context.Shipments
+            var shippingAsset = await _context.Shipments
                 .Where(x => x.Id == cartIndexAsset.ShipmentId)
                 .Include(x => x.AvailableShipment)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if(shippingAsset != null)
             {
@@ -72,7 +74,7 @@ namespace Application.Carts.Queries.GetCartDetail
                 StoreName = cartIndexAsset.Store.Name,
                 ShippingCost = ConvertRupiah.ConvertToRupiah(shippingCost),
                 TotalCartPrice = ConvertRupiah.ConvertToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
-                Lists = await cartDto.ToListAsync()
+                Lists = cartDto.ToList()
             };
 
             return new GetCartDetailVm

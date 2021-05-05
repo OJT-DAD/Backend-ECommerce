@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
@@ -69,17 +70,24 @@ namespace Application.UserManagements.Commands.LoginUser
                 Username = user.Username,
                 Token = tokenString,
                 Role = user.Role,
-                StoreId = StoreAsset(user.Id, _context).Id
+                StoreId = StoreAsset(user.Id, user.Role, _context)
             };
             // return basic user info and authentication token
             return entity;
         }
 
-        private static Store StoreAsset(int id, IApplicationDbContext context)
+        private static int StoreAsset(int id, string role, IApplicationDbContext context)
         {
-            return context.Stores
-                .Where(x => x.UserPropertyId == id)
-                .FirstOrDefault();
+            if(role == Role.Seller)
+            {
+                var storeAsset = context.Stores
+                    .Where(x => x.UserPropertyId == id)
+                    .FirstOrDefault();
+
+                return storeAsset.Id;
+            }
+
+            return 0;
         }
     }
 }

@@ -30,12 +30,14 @@ namespace Application.Carts.Queries.GetCart
 
         public async Task<GetCartVm> Handle(GetCartQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.UserProperties.Any(x => x.Id == request.UserId))
+            var validationExist = await _context.UserProperties.AnyAsync(x => x.Id == request.UserId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(UserProperty), request.UserId);
 
-            var indexAsset = _context.CartIndexs
+            var indexAsset = await _context.CartIndexs
                 .Where(x => x.UserPropertyId == request.UserId)
-                .Include(x => x.Store);
+                .Include(x => x.Store)
+                .ToListAsync();
 
 
             var indexDto = indexAsset.Select(x => new GetCartIndexDto
@@ -48,7 +50,7 @@ namespace Application.Carts.Queries.GetCart
 
             return new GetCartVm
             {
-                Carts = await indexDto.ToListAsync(cancellationToken)
+                Carts = indexDto.ToList()
             };
         }
 
