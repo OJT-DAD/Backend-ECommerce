@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿/*using Application.Common.Interfaces;
 using Application.UserManagements.Commands.UpdateUser;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -38,3 +38,4 @@ namespace Application.AllRoles.UserManagements.Commands.UpdateUser
         }
     }
 }
+*/

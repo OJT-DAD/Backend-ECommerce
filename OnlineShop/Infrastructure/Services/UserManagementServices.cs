@@ -113,10 +113,18 @@ namespace Infrastructure.Services
                 throw new NotFoundException("User not found");
 
             //input change
-            user.Username = userParam.Username;
-            user.FirstName = userParam.FirstName;
-            user.LastName = userParam.LastName;
-            user.Email = userParam.Email;
+            if(userParam.Username != "" && userParam.Username != user.Username)
+                user.Username = userParam.Username;
+            
+            if(userParam.FirstName != "" && user.FirstName != user.FirstName)
+                user.FirstName = userParam.FirstName;
+
+            if (userParam.LastName != "" && user.LastName != user.LastName)
+                user.LastName = userParam.LastName;
+
+            if (userParam.Email != "" && user.Email != user.Email)
+                    user.Email = userParam.Email;
+
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))
