@@ -51,6 +51,7 @@ namespace Application.Stores.Queries.GetStoreById
 
             //Store Dto
             var storeAsset = await _context.Stores.FindAsync(request.StoreId);
+            var count = await _context.Products.Where(a => a.StoreId == request.StoreId).CountAsync();
 
             var storeDto = new GetStoreByIdDto
             {
@@ -59,7 +60,7 @@ namespace Application.Stores.Queries.GetStoreById
                 Description = storeAsset.Description,
                 Address = storeAsset.Address,
                 Contact = storeAsset.Contact,
-                NumberOfProducts = await _context.Products.Where(a => a.StoreId == request.StoreId).CountAsync(),
+                NumberOfProducts = count,
                 Products =  productDto.ToList()
             };
 
