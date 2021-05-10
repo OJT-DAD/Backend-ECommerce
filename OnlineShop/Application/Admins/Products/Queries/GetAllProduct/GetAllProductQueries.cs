@@ -34,7 +34,7 @@ namespace Application.Products.Queries.GetAllProduct
                 ProductId = x.Id,
                 Name = x.Name,
                 Description = x.Description,
-                ImageUrl = x.ImageUrl,
+                ImageName = x.ImageName,
                 Price = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.Price)),
                 StockProduct = x.Stock.StockProduct,
             });

@@ -8,12 +8,8 @@ namespace Application.Users.AdditionalDatas.Commands.AddAdditionalData
 {
     public class AddAdditionalDataCommandValidator : AbstractValidator<AddAdditionalDataCommand>
     {
-        private readonly IApplicationDbContext _context;
-
-        public AddAdditionalDataCommandValidator(IApplicationDbContext context)
+        public AddAdditionalDataCommandValidator()
         {
-            _context = context;
-
             RuleFor(x => x.ShippingAddress)
                 .NotEmpty().WithMessage("This field is required!");
         }

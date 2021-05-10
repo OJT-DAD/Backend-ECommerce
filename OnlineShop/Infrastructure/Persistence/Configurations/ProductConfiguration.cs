@@ -15,7 +15,6 @@ namespace Infrastructure.Persistence.Configurations
             builder.Property(x => x.Price)
                 .HasColumnType("decimal(14,2)");
 
-            builder.Ignore(x => x.ImageUrl);
         }
     }
 }

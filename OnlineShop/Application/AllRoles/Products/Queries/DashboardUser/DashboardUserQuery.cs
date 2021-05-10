@@ -15,6 +15,8 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
     public class DashboardUserQuery : IRequest<DashboardUserVm>
     {
         public SortingProperties Sort { get; set; }
+        public int PageSize { get; set; }
+        public int PageNumber { get; set; }
     }
 
     public class DashboardUserQueryHandler : IRequestHandler<DashboardUserQuery, DashboardUserVm>
@@ -58,8 +60,8 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
                     .Cast<SortingProperties>()
                     .Select(x => new SortingPropertiesDto { Value = (int)x, Name = x.ToString() })
                     .ToList(),
-                    
-                Lists = await productDto.ToListAsync()
+
+                Lists = await productDto.PaginatedListAsync(request.PageSize, request.PageNumber)
             };
         }
     }

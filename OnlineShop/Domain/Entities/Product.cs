@@ -8,7 +8,6 @@ namespace Domain.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public IFormFile ImageUrl { get; set; }
         public string ImageName { get; set; }
         public decimal Price { get; set; }
         public virtual Store Store { get; set; }
