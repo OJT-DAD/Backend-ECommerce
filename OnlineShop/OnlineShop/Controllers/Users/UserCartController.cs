@@ -2,6 +2,7 @@
 using Application.Carts.Commands.DeleteCart;
 using Application.Carts.Queries.GetCart;
 using Application.Carts.Queries.GetCartDetail;
+using Application.Users.Carts.Commands.UpdateCart;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -24,6 +25,12 @@ namespace OnlineShop.Controllers
 
         [HttpPost]
         public async Task<string> Add(CreateCartCommand command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        [HttpPut("edit-quantity")]
+        public async Task<string> UpdateStock(UpdateCartCommand command)
         {
             return await Mediator.Send(command);
         }

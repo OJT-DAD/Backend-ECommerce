@@ -41,7 +41,7 @@ namespace Application.Users.PaymentSlips.Commands.UploadPaymentSlip
             var entity = new PaymentSlip
             {
                 TransactionIndexId = request.TransactionIndexId,
-                ImageUrl = await SaveImage(request.ImageUrl)
+                PaymentSlipImageName = await SaveImage(request.ImageUrl)
             };
 
             _context.PaymentSlips.Add(entity);

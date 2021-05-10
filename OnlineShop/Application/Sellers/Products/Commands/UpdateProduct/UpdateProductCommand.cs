@@ -48,7 +48,7 @@ namespace Application.Products.Commands.UpdateProduct
             if (request.Description != "")
                 productAsset.Description = request.Description;
             if (request.ImageUrl != null)
-                productAsset.ImageUrl = await SaveImage(request.ImageUrl);
+                productAsset.ImageName = await SaveImage(request.ImageUrl);
             if (request.Price != 0)
                 productAsset.Price = request.Price;
             if (request.StockProduct != 0)

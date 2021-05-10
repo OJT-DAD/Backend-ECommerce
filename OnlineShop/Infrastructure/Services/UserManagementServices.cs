@@ -112,19 +112,28 @@ namespace Infrastructure.Services
             if (user == null)
                 throw new NotFoundException("User not found");
 
+
+
             //input change
-            if(userParam.Username != "" && userParam.Username != user.Username)
-                user.Username = userParam.Username;
+            if (userParam.Username != "" && userParam.Username != user.Username)
+            {
+                if(await _context.UserProperties.AllAsync(x => x.Username != userParam.Username))
+                {
+                    user.Username = userParam.Username;
+                }
+            }
             
-            if(userParam.FirstName != "" && user.FirstName != user.FirstName)
+            if(userParam.FirstName != "" && userParam.FirstName != user.FirstName)
                 user.FirstName = userParam.FirstName;
 
-            if (userParam.LastName != "" && user.LastName != user.LastName)
+            if (userParam.LastName != "" && userParam.LastName != user.LastName)
                 user.LastName = userParam.LastName;
 
-            if (userParam.Email != "" && user.Email != user.Email)
+            if (userParam.Email != "" && userParam.Email != user.Email)
+                if (await _context.UserProperties.AllAsync(x => x.Email != userParam.Email))
+                {
                     user.Email = userParam.Email;
-
+                }
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))

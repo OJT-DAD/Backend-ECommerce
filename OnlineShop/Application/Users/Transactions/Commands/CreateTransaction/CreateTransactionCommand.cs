@@ -85,7 +85,7 @@ namespace Application.Transactions.Commands.CreateTransaction
                 {
                     ProductId = assetCart.ProductId,
                     ProductName = assetProduct.Name,
-                    ImageUrl = assetProduct.ImageUrl,
+                    ImageUrl = assetProduct.ImageName,
                     Description = assetProduct.Description,
                     Price = assetProduct.Price,
                     Quantity = assetCart.Quantity,

@@ -39,7 +39,7 @@ namespace Application.Products.Commands.AddNewProduct
             {
                 Name = request.Name,
                 Description = request.Description,
-                ImageUrl = await SaveImage(request.ImageUrl),
+                ImageName = await SaveImage(request.ImageUrl),
                 Price = request.Price,
                 StoreId = request.StoreId,
                 DateAddedOrUpdated = now

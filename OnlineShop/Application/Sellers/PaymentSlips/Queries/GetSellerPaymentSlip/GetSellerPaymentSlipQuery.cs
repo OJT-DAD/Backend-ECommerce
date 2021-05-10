@@ -100,7 +100,7 @@ namespace Application.Sellers.PaymentSlips.Queries.GetSellerPaymentSlip
                 .Where(x => x.TransactionIndexId == id)
                 .FirstOrDefault();
 
-            return asset.ImageUrl;
+            return asset.PaymentSlipImageName;
         }
 
         private static string PaymentAsset(int id, IApplicationDbContext context)

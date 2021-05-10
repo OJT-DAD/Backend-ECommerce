@@ -46,7 +46,7 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
                 ProductId = x.Id,
                 ProductName = x.Name,
                 ProductDescription = x.Description,
-                ProductImage = x.ImageUrl,
+                ProductImage = x.ImageName,
                 Price = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.Price)),
                 StockProduct = x.Stock.StockProduct,
                 DateAddedOrUpdated = x.DateAddedOrUpdated.ToString("ddmmyy")

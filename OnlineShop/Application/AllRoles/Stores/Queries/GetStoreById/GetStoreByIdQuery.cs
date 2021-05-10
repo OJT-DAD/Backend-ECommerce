@@ -43,7 +43,7 @@ namespace Application.Stores.Queries.GetStoreById
             {
                 Id = x.Id,
                 ProductName = x.Name,
-                ProductImageUrl = x.ImageUrl,
+                ProductImageUrl = x.ImageName,
                 ProductDescription = x.Description,
                 ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.Price)),
                 ProductStock = x.Stock.StockProduct,
