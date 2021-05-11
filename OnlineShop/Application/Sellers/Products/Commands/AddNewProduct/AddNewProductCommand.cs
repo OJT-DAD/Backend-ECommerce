@@ -25,6 +25,9 @@ namespace Application.Products.Commands.AddNewProduct
     {
         private readonly IApplicationDbContext _context;
         private readonly IWebHostEnvironment _hostEnvironment;
+
+        //Configure Firebase
+
         public AddNewProductCommandHandler(IApplicationDbContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;

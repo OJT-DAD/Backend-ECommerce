@@ -22,7 +22,10 @@ namespace OnlineShop.Controllers.Sellers
                 return Forbid();
 
             if (id != command.Id)
+            {
                 return BadRequest();
+            }
+            command.Id = id;
 
             return await Mediator.Send(command);
         }
