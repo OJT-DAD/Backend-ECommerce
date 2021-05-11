@@ -21,13 +21,12 @@ namespace Infrastructure
             services.AddDbContext<ApplicationDbContext>( options =>
                     options.UseSqlServer(
                         configuration.GetConnectionString("DefaultConnection"),
-                        b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+                        b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)),
+                        ServiceLifetime.Transient);
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.AddTransient<ApplicationDbContext>();
-
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
+            services.AddTransient<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
 
             services.AddScoped<IUserManagement, UserManagementServices>();
 

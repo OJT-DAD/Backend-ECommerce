@@ -10,13 +10,17 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Sellers
 {
-    [Authorize(Roles = Role.Seller)]
+    [Authorize]
     [Route("seller/store")]
     public class SellerStoreController : ApiControllerBase
     {
         [HttpPut("{id}")]
         public async Task<ActionResult<int>> Update(int id, UpdateStoreCommand command)
         {
+            var currentUserId = int.Parse(User.Identity.Name);
+            if (id != currentUserId && !User.IsInRole(Role.Admin))
+                return Forbid();
+
             if (id != command.Id)
                 return BadRequest();
 
@@ -24,8 +28,12 @@ namespace OnlineShop.Controllers.Sellers
         }
 
         [HttpDelete("{id}")]
-        public async Task<int> Delete(int id)
+        public async Task<ActionResult<int>> Delete(int id)
         {
+            var currentUserId = int.Parse(User.Identity.Name);
+            if (id != currentUserId && !User.IsInRole(Role.Admin))
+                return Forbid();
+
             return await Mediator.Send(new DeleteStoreCommand { Id = id });
         }
     }
