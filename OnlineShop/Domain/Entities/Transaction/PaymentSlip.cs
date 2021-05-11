@@ -6,5 +6,6 @@
         public TransactionIndex TransactionIndex { get; set; }
         public int TransactionIndexId { get; set; }
         public string PaymentSlipImageName { get; set; }
+        public string PaymentSlipImageUrl { get; set; }
     }
 }
