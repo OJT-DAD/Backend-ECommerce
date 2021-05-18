@@ -1,6 +1,8 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Entities.Admin;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,6 +27,13 @@ namespace Application.Admins.Commands.Banks.CreateBank
 
         public async Task<string> Handle(CreateBankCommand request, CancellationToken cancellationToken)
         {
+            //unique bank name validation
+            var uniqueValidation = await _context.AvailableBanks
+                .AllAsync(x => x.BankName == request.BankName);
+            if (uniqueValidation)
+                throw new AppException("Bank name u input alredy exist");
+
+
             var entity = new AvailableBank
             {
                 BankName = request.BankName

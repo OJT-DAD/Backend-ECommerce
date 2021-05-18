@@ -11,21 +11,10 @@ namespace Application.Sellers.Payments.Commands.ChoosePayment
 {
     public class ChoosePaymentCommandValidator : AbstractValidator<ChoosePaymentCommand>
     {
-        private readonly IApplicationDbContext _context;
-
-        public ChoosePaymentCommandValidator(IApplicationDbContext context)
+        public ChoosePaymentCommandValidator()
         {
-            _context = context;
-
             RuleFor(x => x.BankAccountNumber)
-                .NotEmpty().WithMessage("This field is required!")
-                .MustAsync(BeUniqueNumber).WithMessage("Cannot save duplicate Account Number");
-        }
-
-        private async Task<bool> BeUniqueNumber(string number, CancellationToken arg2)
-        {
-            return await _context.Payments
-                .AllAsync(x => x.BankAccountNumber != number);
+                .NotEmpty().WithMessage("This field is required!");
         }
     }
 }

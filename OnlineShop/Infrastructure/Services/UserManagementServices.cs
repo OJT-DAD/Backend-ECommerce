@@ -64,6 +64,17 @@ namespace Infrastructure.Services
 
         public async Task<UserProperty> Create(UserProperty user, string password, CancellationToken cancellationToken)
         {
+            //unique username validation
+            var uniqueUsernameValidation = await _context.UserProperties
+                .AllAsync(x => x.Username == user.Username);
+            if (uniqueUsernameValidation)
+                throw new AppException("Username alredy exist!");
+            //unique email validation
+            var uniqueEmailValidation = await _context.UserProperties
+                .AllAsync(x => x.Email == user.Email);
+            if (uniqueEmailValidation)
+                throw new AppException("Email alredy exist!");
+
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PasswordHash = passwordHash;
@@ -111,8 +122,6 @@ namespace Infrastructure.Services
 
             if (user == null)
                 throw new NotFoundException("User not found");
-
-
 
             //input change
             if (userParam.Username != "" && userParam.Username != user.Username)
