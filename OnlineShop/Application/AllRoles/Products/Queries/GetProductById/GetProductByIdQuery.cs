@@ -44,7 +44,8 @@ namespace Application.AllRoles.Products.Queries.GetProductById
                 StoreId = productAsset.StoreId,
                 ProductName = productAsset.Name,
                 Description = productAsset.Description,
-                ImageUrl = productAsset.ImageName,
+                ImageName = productAsset.ImageName,
+                ImageUrl = productAsset.ImageUrl,
                 Price = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(productAsset.Price)),
                 StockProduct = productAsset.Stock.StockProduct
             };

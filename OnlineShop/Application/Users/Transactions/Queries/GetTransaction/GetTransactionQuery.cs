@@ -44,7 +44,8 @@ namespace Application.Transactions.Queries.GetTransaction
             {
                 ProductId = x.ProductId,
                 ProductName = x.ProductName,
-                ProductImage = x.ImageUrl,
+                ProductImageUrl = x.ImageUrl,
+                ProductImageName = x.ImageName,
                 ProductCount = x.Quantity,
                 ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.Price)),
                 TotalProductPrice = ConvertRupiah.ConvertToRupiah(x.TotalPrice)
