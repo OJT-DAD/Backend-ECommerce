@@ -1,7 +1,10 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,8 +33,21 @@ namespace Application.Stores.Commands.CreateStore
 
         public async Task<string> Handle(CreateStoreCommand request, CancellationToken cancellationToken)
         {
-
             var now = DateTime.Now;
+
+            //validasi satu user satu toko
+            var userAsset = await _context.UserProperties.FindAsync(request.UserPropertyId);
+            if (userAsset.Role == "Seller")
+                throw new AppException("You can only have one store!");
+
+            var uniqueNameValidation = await _context.Stores
+                .AllAsync(x => x.Name == request.StoreName);
+
+            if (uniqueNameValidation)
+                throw new AppException("Store name alredy exist!");
+
+            if (_context.NewSellers.Any(x => x.UserPropertyId == request.UserPropertyId))
+                throw new AppException("You have made a request, please wait for confirmation from the ADMIN!");
 
             var entity = new NewSeller
             {

@@ -23,9 +23,8 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
 
         public async Task<GetNewSellerVm> Handle(GetNewSellerQuery request, CancellationToken cancellationToken)
         {
-            var asset = await _context.NewSellers
-                .Include(x => x.UserProperty)
-                .ToListAsync();
+            var asset = _context.NewSellers
+                .Include(x => x.UserProperty);
 
             foreach(var data in asset)
             {

@@ -1,4 +1,4 @@
-﻿using Application.Common.Interfaces;
+﻿/*using Application.Common.Interfaces;
 using Application.Stores.Commands.CreateStore;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -58,4 +58,4 @@ namespace Application.Users.Stores.Commands.CreateStore
                 .AllAsync(x => x.NPWP != npwp);
         }
     }
-}
+}*/

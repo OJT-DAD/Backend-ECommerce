@@ -60,7 +60,7 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
             var dto = asset.Select(x => new GetNewSellerDetailDto
             {
                 Id = x.Id,
-                UserPropertyId = x.UserPropertyId,
+                UserId = x.UserPropertyId,
                 FullName = x.UserProperty.FirstName + " " + x.UserProperty.LastName,
                 Email = x.UserProperty.Email,
                 Username = x.UserProperty.Username,
@@ -70,13 +70,24 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
                 StoreDescription = x.StoreDescription,
                 StoreAddress = x.StoreAddress,
                 StoreContact = x.StoreContact,
-                DateRequest = x.DateRequest.ToString("dd-MM-yyyy")
+                DateRequest = x.DateRequest.ToString("dd-MM-yyyy"),
+                DateApprovalResult = DateApprovalResult(x.DateApprovalResult),
+                ApprovalResult = x.ApprovalResult,
             });
 
             return new GetNewSellerDetailVm
             {
                 Details = dto.FirstOrDefault()
             };
+        }
+        private static string DateApprovalResult(DateTime? dateApprovalResult)
+        {
+            if (dateApprovalResult != null)
+            {
+                return dateApprovalResult?.ToString("dd");
+            }
+
+            return "Hasnt been approve yet";
         }
     }
 }
