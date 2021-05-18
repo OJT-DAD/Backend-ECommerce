@@ -3,6 +3,7 @@ using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,13 +31,15 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
                 throw new NotFoundException(nameof(NewSeller), request.Id);
 
             //Delete after 3 days
+            var now = DateTime.Now;
+
             var newSellerAsset = await _context.NewSellers
                .Where(x => x.Id == request.Id)
                .FirstOrDefaultAsync();
 
             var maxDay = newSellerAsset.DateApprovalResult?.AddDays(3);
 
-            if (newSellerAsset.DateApprovalResult > maxDay)
+            if (now > maxDay)
             {
                 _context.NewSellers.Remove(newSellerAsset);
 
@@ -67,7 +70,7 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
                 StoreDescription = x.StoreDescription,
                 StoreAddress = x.StoreAddress,
                 StoreContact = x.StoreContact,
-                DateRequest = x.DateRequest.ToString("dd-mm-yyyy")
+                DateRequest = x.DateRequest.ToString("dd-MM-yyyy")
             });
 
             return new GetNewSellerDetailVm

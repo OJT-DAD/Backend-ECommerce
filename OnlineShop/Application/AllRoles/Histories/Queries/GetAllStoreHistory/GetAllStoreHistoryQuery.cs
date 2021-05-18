@@ -72,7 +72,8 @@ namespace Application.AllRoles.Histories.Queries.GetAllStoreHistory
                 ProductId = x.ProductId,
                 Quantity = x.Quantity,
                 ProductName = x.ProductName,
-                ProductImage = x.ImageUrl,
+                ProductImageName = x.ProductName,
+                ProductImageUrl = x.ImageUrl,
                 PricePerUnit = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.UnitPrice)),
                 TotalPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.TotalPrice))
 

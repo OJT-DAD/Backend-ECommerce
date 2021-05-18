@@ -11,7 +11,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllHistory
         public string ProductImageName { get; set; }
         public string ProductImageUrl  { get; set; }
         public string PricePerUnit { get; set; }
-        public string Quantity { get; set; }
+        public int Quantity { get; set; }
         public string TotalPrice { get; set; }
     }
 }

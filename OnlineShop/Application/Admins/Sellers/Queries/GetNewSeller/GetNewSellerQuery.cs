@@ -27,6 +27,13 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
                 .Include(x => x.UserProperty)
                 .ToListAsync();
 
+            foreach(var data in asset)
+            {
+                RemoveMethod(data.Id, _context);
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+
             var dto = asset.Select(x => new GetNewSellerDto
             {
                 Id = x.Id,
@@ -35,17 +42,10 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
                 Email = x.UserProperty.Email,
                 NPWP = x.NPWP,
                 IdCardNumber = x.IdCardNumber,
-                DateRequest = x.DateRequest.ToString("dd-mm-yyyy"),
+                DateRequest = x.DateRequest.ToString("dd-MM-yyyy"),
                 DateApprovalResult = DateApprovalResult(x.DateApprovalResult),
                 ApprovalResult = x.ApprovalResult,
             });
-
-            foreach(var data in asset)
-            {
-                RemoveMethod(data.Id, _context);
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
 
             return new GetNewSellerVm
             {
@@ -59,9 +59,11 @@ namespace Application.Admins.Queries.Sellers.GetNewSeller
                 .Where(x => x.Id == id)
                 .FirstOrDefault();
 
+            var now = DateTime.Now;
+
             var maxDay = newSellerAsset.DateApprovalResult?.AddDays(3);
 
-            if(newSellerAsset.DateApprovalResult > maxDay)
+            if(now > maxDay)
             {
                 context.NewSellers.Remove(newSellerAsset);
             }

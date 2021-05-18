@@ -75,7 +75,8 @@ namespace Application.AllRoles.Histories.Queries.GetAllUserHistory
                 ProductId = x.ProductId,
                 Quantity = x.Quantity,
                 ProductName = x.ProductName,
-                ProductImage = x.ImageUrl,
+                ProductImageName = x.ImageName,
+                ProductImageUrl = x.ImageUrl,
                 PricePerUnit = ToRupiah(Convert.ToInt32(x.UnitPrice)),
                 TotalPrice = ToRupiah(Convert.ToInt32(x.TotalPrice))
             });

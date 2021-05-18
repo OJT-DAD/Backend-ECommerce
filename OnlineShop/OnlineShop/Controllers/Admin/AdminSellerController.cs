@@ -31,10 +31,9 @@ namespace OnlineShop.Controllers.Admin
         }
 
         [HttpGet("get-new-seller-detail/{id}")]
-        public async Task<GetNewSellerDetailVm> GetNewSellerDetail(int id, GetNewSellerDetailQuery query)
+        public async Task<GetNewSellerDetailVm> GetNewSellerDetail(int id)
         {
-            query.Id = id;
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetNewSellerDetailQuery { Id = id });
         }
 
         [HttpPost("accept-new-seller/{id}")]
