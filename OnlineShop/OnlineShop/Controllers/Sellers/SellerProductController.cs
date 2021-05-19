@@ -2,6 +2,7 @@
 using Application.Products.Commands.AddNewProduct;
 using Application.Products.Commands.DeleteProduct;
 using Application.Products.Commands.UpdateProduct;
+using Application.Sellers.Products.Queries.GetProductUpdate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,6 +16,12 @@ namespace OnlineShop.Controllers.Sellers
     [Route("seller/product")]
     public class SellerProductController : ApiControllerBase
     {
+        [HttpGet("get-product-update/{productId}")]
+        public async Task<GetProductUpdateVm> Get(int productId)
+        {
+            return await Mediator.Send(new GetProductUpdateQuery { ProductId = productId });
+        }
+
         [HttpPost]
         public async Task<int> Add([FromForm] AddNewProductCommand command)
         {

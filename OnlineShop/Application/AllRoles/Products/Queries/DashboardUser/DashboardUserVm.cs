@@ -8,6 +8,6 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
     public class DashboardUserVm
     {
         public IList<SortingPropertiesDto> SortBy { get; set; }
-        public PaginatedList<DashboardUserDto> Lists { get; set; }
+        public IList<DashboardUserDto> Lists { get; set; }
     }
 }
