@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +32,10 @@ namespace Application.Sellers.Products.Queries.GetProductUpdate
             if (!validationExist)
                 throw new NotFoundException(nameof(Product), request.ProductId);
 
-            var productAsset = await _context.Products.FindAsync(request.ProductId);
+            var productAsset = _context.Products
+                .Where(x => x.Id == request.ProductId)
+                .Include(x => x.Stock)
+                .FirstOrDefault();
 
             var dto = new GetProductUpdateDto
             {
