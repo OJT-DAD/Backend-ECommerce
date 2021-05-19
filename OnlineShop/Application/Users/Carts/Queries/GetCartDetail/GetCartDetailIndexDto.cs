@@ -7,6 +7,7 @@ namespace Application.Carts.Queries.GetCartDetail
     public class GetCartDetailIndexDto
     {
         public int Id { get; set; }
+        public int StoreId { get; set; }
         public string StoreName { get; set; }
         public string TotalCost { get; set; }
         public string FinalTotalCost { get; set; }

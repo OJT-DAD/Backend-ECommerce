@@ -73,6 +73,7 @@ namespace Application.Carts.Queries.GetCartDetail
             var model = new GetCartDetailIndexDto
             {
                 Id = request.CartIndexId,
+                StoreId = cartIndexAsset.StoreId,
                 StoreName = cartIndexAsset.Store.Name,
                 ShippingCost = ConvertRupiah.ConvertToRupiah(shippingCost),
                 TotalCost = ConvertRupiah.ConvertToRupiah(TotalCost(request.CartIndexId,_context)),
