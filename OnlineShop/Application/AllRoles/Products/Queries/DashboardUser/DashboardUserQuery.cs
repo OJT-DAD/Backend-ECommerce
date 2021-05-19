@@ -15,6 +15,7 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
     public class DashboardUserQuery : IRequest<DashboardUserVm>
     {
         public SortingProperties Sort { get; set; }
+        public string Search { get; set; }
     }
 
     public class DashboardUserQueryHandler : IRequestHandler<DashboardUserQuery, DashboardUserVm>
@@ -40,6 +41,11 @@ namespace Application.AllRoles.Products.Queries.DashboardUser
                 SortingProperties.SortByDescendingPrice => productAsset.OrderByDescending(x => x.Price),
                 _ => null,
             };
+
+            if (!string.IsNullOrEmpty(request.Search))
+            {
+                productAsset = productAsset.Where(o => o.Name.Contains(request.Search));
+            }
 
             var productDto = productAsset.Select(x => new DashboardUserDto
             {
