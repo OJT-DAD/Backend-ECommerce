@@ -48,6 +48,8 @@ namespace Application.Carts.Queries.GetCartDetail
                 Id = x.Id,
                 ProductId = x.ProductId,
                 ProductName = ProductAsset(x.ProductId, _context).Name,
+                ProductImageName = ProductAsset(x.ProductId, _context).ImageName,
+                ProductImageUrl = ProductAsset(x.ProductId, _context).ImageUrl,
                 ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(ProductAsset(x.ProductId, _context).Price)),
                 Quantity = x.Quantity,
                 TotalPrice = ConvertRupiah.ConvertToRupiah(x.TotalPrice)
@@ -73,7 +75,8 @@ namespace Application.Carts.Queries.GetCartDetail
                 Id = request.CartIndexId,
                 StoreName = cartIndexAsset.Store.Name,
                 ShippingCost = ConvertRupiah.ConvertToRupiah(shippingCost),
-                TotalCartPrice = ConvertRupiah.ConvertToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
+                TotalCost = ConvertRupiah.ConvertToRupiah(TotalCost(request.CartIndexId,_context)),
+                FinalTotalCost = ConvertRupiah.ConvertToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
                 Lists = cartDto.ToList()
             };
 
@@ -89,6 +92,22 @@ namespace Application.Carts.Queries.GetCartDetail
             return _context.Products
                 .Where(x => x.Id == productId)
                 .FirstOrDefault();
+        }
+
+        private static int TotalCost(int cartIndexId, IApplicationDbContext context)
+        {
+            var totalCost = 0;
+
+            var cartAsset = context.Carts
+                .Where(x => x.CartIndexId == cartIndexId);
+
+            foreach(var price in cartAsset)
+            {
+                var a = totalCost;
+                totalCost = a + price.TotalPrice;
+            }
+
+            return totalCost;
         }
 
         private static int TotalCartPrice(int id, IApplicationDbContext _context, decimal shippingCost)
