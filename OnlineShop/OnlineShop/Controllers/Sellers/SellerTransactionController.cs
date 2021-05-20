@@ -17,9 +17,9 @@ namespace OnlineShop.Controllers.Sellers
     public class SellerTransactionController : ApiControllerBase
     {
         [HttpGet("all-transaction/{storeId}")]
-        public async Task<GetTransactionStoreVm> GetAll(int storeId)
+        public async Task<GetTransactionByStoreIdVm> GetAll(int storeId)
         {
-            return await Mediator.Send(new GetTransactionStoreQuery { StoreId = storeId });
+            return await Mediator.Send(new GetTransactionByStoreIdQuery { StoreId = storeId });
         }
 
         [HttpGet("detail-transaction/{transactionIndexId}")]

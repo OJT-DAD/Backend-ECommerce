@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Application.Sellers.Transactions.Queries.GetTransactionStoreDetail
 {
-    class GetTransactionStoreDetailShippingDto
+    public class GetTransactionStoreDetailShippingDto
     {
+        public int ShippingMethodId { get; set; }
+        public string ShippingMethodName { get; set; }
+        public string ShippingCost { get; set; }
     }
 }
