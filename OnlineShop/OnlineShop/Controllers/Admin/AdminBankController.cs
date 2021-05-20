@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Admin
 {
-    [Authorize(Roles = Role.Admin)]
+    [Authorize(Roles = Role.Admin + ", " + Role.Seller)]
     [Route("admin/bank")]
     public class AdminBankController : ApiControllerBase
     {

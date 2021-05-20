@@ -32,12 +32,6 @@ namespace Application.Sellers.Payments.Commands.ChoosePayment
 
         public async Task<string> Handle(ChoosePaymentCommand request, CancellationToken cancellationToken)
         {
-            //unique bank account number validation
-            var uniqueValidation = await _context.Payments
-                .AllAsync(x => x.BankAccountNumber == request.BankAccountNumber);
-            if (uniqueValidation)
-                throw new AppException("Bank Number u input alredy exist!");
-
             //Validation exist store and bank
             var validationExist1 = await _context.Stores.AnyAsync(x => x.Id == request.StoreId);
             var validationExist2 = await _context.AvailableBanks.AnyAsync(x => x.Id == request.BankId);

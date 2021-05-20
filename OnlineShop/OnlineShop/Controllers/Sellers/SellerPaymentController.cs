@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers
 {
-    [Authorize(Roles = Role.Seller)]
+    [Authorize]
     [Route("seller/Payment")]
     public class SellerPaymentController : ApiControllerBase
     {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers.Admin
 {
-    [Authorize(Roles = Role.Admin)]
+    [Authorize(Roles = Role.Admin + ", " + Role.Seller)]
     [Route("admin/shipping")]
     public class AdminShipmentController : ApiControllerBase
     {
