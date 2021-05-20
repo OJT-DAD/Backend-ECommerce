@@ -15,12 +15,6 @@ namespace OnlineShop.Controllers.Sellers
     [Route("seller/payment-slip")]
     public class SellerPaymentSlipController : ApiControllerBase
     {
-        [HttpGet]
-        public async Task<GetSellerPaymentSlipVm> Get([FromQuery]GetSellerPaymentSlipQuery query)
-        {
-            return await Mediator.Send(query);
-        }
-
         [HttpPut("accept-submission")]
         public async Task<string> AcceptSubmission(AcceptSubmissionCommand command)
         {
