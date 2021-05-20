@@ -41,9 +41,9 @@ namespace Application.Sellers.Transactions.Queries.GetTransactionStore
                 TransactionIndexId = x.Id,
                 Address = x.ShippingAddress,
                 Note = x.Note,
-                Username = UserPropertiesAsset(x.Id, _context),
-                PaymentMethod = PaymentAsset(x.Id, _context),
-                ShipmentMethod = ShipmentMethod(x.Id, _context),
+                Username = UserPropertiesAsset(x.UserPropertyId, _context),
+                PaymentMethod = PaymentAsset(x.PaymentId, _context),
+                ShipmentMethod = ShipmentMethod(x.ShipmentId, _context),
                 TotalTransactionPrice = TotalTransactionAsset(x.Id, x.ShipmentId, _context)
             });
 

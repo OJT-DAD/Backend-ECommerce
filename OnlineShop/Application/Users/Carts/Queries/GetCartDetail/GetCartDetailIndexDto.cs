@@ -12,6 +12,8 @@ namespace Application.Carts.Queries.GetCartDetail
         public string TotalCost { get; set; }
         public string FinalTotalCost { get; set; }
         public string ShippingCost { get; set; }
+        public int ShippingId { get; set; }
+        public int PaymentId { get; set; }
         public IList<GetCartDetailDto> Lists { get; set; }
     }
 }

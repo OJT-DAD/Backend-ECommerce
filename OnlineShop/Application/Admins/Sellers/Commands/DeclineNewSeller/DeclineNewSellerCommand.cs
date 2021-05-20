@@ -41,6 +41,8 @@ namespace Application.Admins.Commands.Sellers.DeclineNewSeller
             newSellerAsset.DateApprovalResult = DateTime.Now;
             newSellerAsset.ApprovalResult = Model.Rejected;
 
+            _context.NewSellers.Remove(newSellerAsset);
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return "Userid: " + userAsset.Id + " request to be seller has been rejected";

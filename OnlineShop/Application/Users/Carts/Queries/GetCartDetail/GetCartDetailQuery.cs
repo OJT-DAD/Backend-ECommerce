@@ -77,6 +77,8 @@ namespace Application.Carts.Queries.GetCartDetail
                 StoreName = cartIndexAsset.Store.Name,
                 ShippingCost = ConvertRupiah.ConvertToRupiah(shippingCost),
                 TotalCost = ConvertRupiah.ConvertToRupiah(TotalCost(request.CartIndexId,_context)),
+                PaymentId = cartIndexAsset.PaymentId,
+                ShippingId = cartIndexAsset.ShipmentId,
                 FinalTotalCost = ConvertRupiah.ConvertToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
                 Lists = cartDto.ToList()
             };

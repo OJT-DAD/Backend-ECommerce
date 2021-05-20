@@ -7,6 +7,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllHistory
 {
     public class GetAllHistoryIndexDto
     {
+        public int Id { get; set; }
         public int StoreId { get; set; }
         public string StoreName { get; set; }
         public string TotalTransactionPrice { get; set; }

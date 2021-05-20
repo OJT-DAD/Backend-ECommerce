@@ -60,6 +60,8 @@ namespace Application.Admins.Commands.Sellers.AcceptNewSeller
             asset.DateApprovalResult = DateTime.Now;
             asset.ApprovalResult = Model.Approved;
 
+            _context.NewSellers.Remove(asset);
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return entity;

@@ -42,7 +42,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllUserHistory
                 Id = x.Id,
                 TotalTransactionPrice = TotalTransaction(x.Id, x.ShippingId, _context),
                 FullName = FullName(x.UserPropertyId, _context),
-                DateTransactionFinish = x.DateTransactionDone.ToString("yymmdd"),
+                DateTransactionFinish = x.DateTransactionDone.ToString("dd-MM-yyyy"),
                 Note = x.Note,
                 ShippingAddress = x.ShippingAddress,
                 Status = x.Status,
@@ -86,7 +86,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllUserHistory
 
         private string TotalTransaction(int id, int shippingId, IApplicationDbContext context)
         {
-            var shippingCost = context.Shipments
+            var shippingAsset = context.Shipments
                 .Where(x => x.Id == shippingId)
                 .Include(x => x.AvailableShipment)
                 .FirstOrDefault();
@@ -102,7 +102,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllUserHistory
                 value = a + Convert.ToInt32(data.TotalPrice);
             }
 
-            return ToRupiah(value + Convert.ToInt32(shippingCost));
+            return ToRupiah(value + Convert.ToInt32(shippingAsset.AvailableShipment.ShipmentCost));
         }
 
         private GetAllUserHistoryShippingDto Shipping(int shippingId, IApplicationDbContext context)

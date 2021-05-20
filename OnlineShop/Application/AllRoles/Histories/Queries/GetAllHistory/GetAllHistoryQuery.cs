@@ -32,11 +32,12 @@ namespace Application.AllRoles.Histories.Queries.GetAllHistory
 
             var indexDto = historyIndexAsset.Select(x => new GetAllHistoryIndexDto
             {
+                Id = x.Id,
                 StoreId = x.StoreId,
                 StoreName = StoreAsset(x.StoreId, _context).Name,
                 PaymentMethod = Payment(x.PaymentId, _context),
                 TotalTransactionPrice = TotalTransaction(x.Id, x.ShippingId, _context),
-                DateTransactionFinish = x.DateTransactionDone.ToString("yymmss"),
+                DateTransactionFinish = x.DateTransactionDone.ToString("dd-MM-yyyy"),
                 Note = x.Note,
                 ShippingAddress = x.ShippingAddress,
                 StatusTransaction = x.Status,
@@ -68,7 +69,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllHistory
         }
         private string TotalTransaction(int id, int shippingId, IApplicationDbContext context)
         {
-            var shippingCost = context.Shipments
+            var shippingAsset = context.Shipments
                 .Where(x => x.Id == shippingId)
                 .Include(x => x.AvailableShipment)
                 .FirstOrDefault();
@@ -84,7 +85,7 @@ namespace Application.AllRoles.Histories.Queries.GetAllHistory
                 value = a + Convert.ToInt32(data.TotalPrice);
             }
 
-            return ConvertRupiah.ConvertToRupiah(value + Convert.ToInt32(shippingCost));
+            return ConvertRupiah.ConvertToRupiah(value + Convert.ToInt32(shippingAsset.AvailableShipment.ShipmentCost));
         }
         private GetAllHistoryUserPropertyDto UserData(int userPropertyId, IApplicationDbContext context)
         {
