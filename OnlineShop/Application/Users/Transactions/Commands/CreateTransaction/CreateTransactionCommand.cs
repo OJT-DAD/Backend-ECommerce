@@ -107,7 +107,7 @@ namespace Application.Transactions.Commands.CreateTransaction
             _context.CartIndexs.Remove(indexAsset);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return 1;
+            return transactionIndexEntity.Id;
         }
     }
 }
