@@ -93,10 +93,10 @@ namespace OnlineShop
             builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
             .AllowAnyHeader()
             .AllowAnyMethod());
-            app.UseCors(builder =>
-            builder.WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+            //app.UseCors(builder =>
+            //builder.WithOrigins("http://*:3000")
+            //.AllowAnyHeader()
+            //.AllowAnyMethod());
             app.UseRouting();
 
             app.UseAuthentication();

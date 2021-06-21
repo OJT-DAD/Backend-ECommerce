@@ -11,6 +11,7 @@ namespace Application.Sellers.Products.Queries.GetProductUpdate
         public string ImageProductUrl { get; set; }
         public string ImageProductName { get; set; }
         public decimal PricePerUnit { get; set; }
+        public string Description { get; set; }
         public int Stock { get; set; }
     }
 }

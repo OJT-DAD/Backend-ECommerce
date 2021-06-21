@@ -17,9 +17,9 @@ namespace OnlineShop.Controllers.Sellers
         [HttpPut("{id}")]
         public async Task<ActionResult<int>> Update(int id, UpdateStoreCommand command)
         {
-            var currentUserId = int.Parse(User.Identity.Name);
-            if (id != currentUserId && !User.IsInRole(Role.Admin))
-                return Forbid();
+            //var currentUserId = int.Parse(User.Identity.Name);
+            //if (id != currentUserId && !User.IsInRole(Role.Admin))
+            //    return Forbid();
 
             if (id != command.Id)
             {
