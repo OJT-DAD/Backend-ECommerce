@@ -44,6 +44,7 @@ namespace Application.Sellers.Products.Queries.GetProductUpdate
                 ImageProductName = productAsset.ImageName,
                 ImageProductUrl = productAsset.ImageUrl,
                 PricePerUnit = productAsset.Price,
+                Description = productAsset.Description,
                 Stock = productAsset.Stock.StockProduct
             };
 

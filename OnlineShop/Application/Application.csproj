@@ -5,9 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Users\Transactions\Commands\CreateTransaction\CreateTransactionCommand.cs~RF6709114.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="AllRoles\Histories\Commands\" />
     <Folder Include="Common\Extensions\" />
     <Folder Include="Common\Security\" />
+    <Folder Include="Users\Transactions\Commands\CreateTransaction\" />
   </ItemGroup>
 
   <ItemGroup>
