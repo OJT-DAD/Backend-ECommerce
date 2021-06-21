@@ -29,12 +29,14 @@ namespace Application.Carts.Commands.CreateCart
 
         public async Task<string> Handle(CreateCartCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.UserProperties.Any(x => x.Id == request.UserId))
+            var validationExist = await _context.UserProperties.AnyAsync(x => x.Id == request.UserId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(UserProperty), request.UserId);
 
             //Get CartIndex
-            var cartIndex = _context.CartIndexs
-                .Where(x => x.UserPropertyId == request.UserId);
+            var cartIndex = await _context.CartIndexs
+                .Where(x => x.UserPropertyId == request.UserId)
+                .ToListAsync();
 
             //Get Product Asset
             var productAsset = await _context.Products
@@ -57,9 +59,10 @@ namespace Application.Carts.Commands.CreateCart
             await _context.SaveChangesAsync(cancellationToken);
 
             //retrieve the newly created data
-            var indexAsset = _context.CartIndexs
+            var indexAsset = await _context.CartIndexs
                 .Where(x => x.UserPropertyId == request.UserId)
-                .Where(x => x.StoreId == request.StoreId);
+                .Where(x => x.StoreId == request.StoreId)
+                .ToListAsync();
 
             //Logic user alredy > 1 store 
             if (productAsset.StoreId == indexAsset.FirstOrDefault().StoreId && indexAsset.Count() > 1)
@@ -74,12 +77,12 @@ namespace Application.Carts.Commands.CreateCart
                 };
 
                 //Logic if user add product that alredy have the same product Id in Database
-                if (_context.Carts.Any(x => x.ProductId == request.ProductId))
+                if (await _context.Carts.AnyAsync(x => x.ProductId == request.ProductId))
                 {
                     //Quantity Update
-                    var sameProductIdAsset = _context.Carts
+                    var sameProductIdAsset = await _context.Carts
                         .Where(x => x.ProductId == request.ProductId)
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
                     var firstQuantity = sameProductIdAsset.Quantity;
                     sameProductIdAsset.Quantity = firstQuantity + request.Quantity;
 
@@ -87,14 +90,14 @@ namespace Application.Carts.Commands.CreateCart
                     sameProductIdAsset.TotalPrice = sameProductIdAsset.Quantity * Convert.ToInt32(productAsset.Price);
 
                     //Remove new index and save update
-                    var remove2 = _context.CartIndexs.Find(cartIndexEntity.Id);
+                    var remove2 = await _context.CartIndexs.FindAsync(cartIndexEntity.Id);
                     _context.CartIndexs.Remove(remove2);
                     await _context.SaveChangesAsync(cancellationToken);
                     return "Karena di database sudah terdapat product dengan product id yang sama, maka hanya jumlah saja yang ditambahkan";
                 }
 
                 //Manipulation data index and carts
-                var remove = _context.CartIndexs.Find(cartIndexEntity.Id);
+                var remove = await _context.CartIndexs.FindAsync(cartIndexEntity.Id);
                 _context.CartIndexs.Remove(remove);
                 _context.Carts.Add(cartEntity);
 

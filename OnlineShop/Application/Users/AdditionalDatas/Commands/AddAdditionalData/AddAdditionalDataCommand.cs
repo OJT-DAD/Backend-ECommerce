@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,8 @@ namespace Application.Users.AdditionalDatas.Commands.AddAdditionalData
 
         public async Task<string> Handle(AddAdditionalDataCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.CartIndexs.Any(x => x.Id == request.CartIndexId))
+            var validationExist = await _context.CartIndexs.AnyAsync(x => x.Id == request.CartIndexId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(CartIndex), request.CartIndexId);
 
             var entity = new AdditionalData

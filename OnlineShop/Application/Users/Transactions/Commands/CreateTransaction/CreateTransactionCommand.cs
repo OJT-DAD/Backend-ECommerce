@@ -59,14 +59,14 @@ namespace Application.Transactions.Commands.CreateTransaction
             await _context.SaveChangesAsync(cancellationToken);
 
             //Moving Cart to Transaction Method
-            var count = _context.Carts
+            var count = await _context.Carts
                 .Where(x => x.CartIndexId == indexAsset.Id)
-                .Count();
+                .CountAsync();
 
-            var index = _context.TransactionIndexs
+            var index = await _context.TransactionIndexs
                 .Where(x => x.UserPropertyId == indexAsset.UserPropertyId)
                 .OrderByDescending(x => x.Id)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             //Loop for multiple data
             while (count > 0)
@@ -86,6 +86,7 @@ namespace Application.Transactions.Commands.CreateTransaction
                     ProductId = assetCart.ProductId,
                     ProductName = assetProduct.Name,
                     ImageUrl = assetProduct.ImageUrl,
+                    ImageName = assetProduct.ImageName,
                     Description = assetProduct.Description,
                     Price = assetProduct.Price,
                     Quantity = assetCart.Quantity,
@@ -106,7 +107,7 @@ namespace Application.Transactions.Commands.CreateTransaction
             _context.CartIndexs.Remove(indexAsset);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return 1;
+            return transactionIndexEntity.Id;
         }
     }
 }

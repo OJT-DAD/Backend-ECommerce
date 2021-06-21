@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,12 +30,14 @@ namespace Application.Carts.Queries.GetCart
 
         public async Task<GetCartVm> Handle(GetCartQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.UserProperties.Any(x => x.Id == request.UserId))
+            var validationExist = await _context.UserProperties.AnyAsync(x => x.Id == request.UserId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(UserProperty), request.UserId);
 
-            var indexAsset = _context.CartIndexs
+            var indexAsset = await _context.CartIndexs
                 .Where(x => x.UserPropertyId == request.UserId)
-                .Include(x => x.Store);
+                .Include(x => x.Store)
+                .ToListAsync();
 
 
             var indexDto = indexAsset.Select(x => new GetCartIndexDto
@@ -42,12 +45,12 @@ namespace Application.Carts.Queries.GetCart
                 Id = x.Id,
                 StoreName = x.Store.Name,
                 Lists = CartAsset(x.Id, _context),
-                TotalPriceCart = ToRupiah(TotalCartPrice(x.Id,  _context))
+                TotalPriceCart = ConvertRupiah.ConvertToRupiah(TotalCartPrice(x.Id,  _context))
             });
 
             return new GetCartVm
             {
-                Carts = await indexDto.ToListAsync(cancellationToken)
+                Carts = indexDto.ToList()
             };
         }
 
@@ -65,9 +68,9 @@ namespace Application.Carts.Queries.GetCart
                 ListId = x.Id,
                 ProductId = x.ProductId,
                 ProductName = ProductAsset(x.ProductId, _context).Name,
-                ProductPrice = ToRupiah(Convert.ToInt32(ProductAsset(x.ProductId, _context).Price)),
+                ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(ProductAsset(x.ProductId, _context).Price)),
                 Quantity = x.Quantity,
-                TotalPrice = ToRupiah(x.TotalPrice)
+                TotalPrice = ConvertRupiah.ConvertToRupiah(x.TotalPrice)
             });
 
             return dto.ToList();
@@ -95,11 +98,6 @@ namespace Application.Carts.Queries.GetCart
             return _context.Products
                 .Where(x => x.Id == productId)
                 .FirstOrDefault();
-        }
-
-        private static string ToRupiah(int price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
         }
     }
 }

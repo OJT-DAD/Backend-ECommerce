@@ -29,7 +29,8 @@ namespace Application.Sellers.PaymentSlips.Commands.AcceptSubmission
 
         public async Task<string> Handle(AcceptSubmissionCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.TransactionIndexs.Any(x => x.Id == request.TransactionIndexId))
+            var validationExist = await _context.TransactionIndexs.AnyAsync(x => x.Id == request.TransactionIndexId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(TransactionIndex), request.TransactionIndexId);
 
             //Change status to on Process
@@ -43,8 +44,9 @@ namespace Application.Sellers.PaymentSlips.Commands.AcceptSubmission
             await _context.SaveChangesAsync(cancellationToken);
 
             //Minus stock
-            var transactionAsset = _context.Transactions
-                .Where(x => x.TransactionIndexId == request.TransactionIndexId);
+            var transactionAsset = await _context.Transactions
+                .Where(x => x.TransactionIndexId == request.TransactionIndexId)
+                .ToListAsync();
 
             foreach(var count in transactionAsset)
             {

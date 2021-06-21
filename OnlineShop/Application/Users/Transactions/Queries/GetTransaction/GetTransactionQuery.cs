@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using Domain.Enums;
 using MediatR;
@@ -35,24 +36,26 @@ namespace Application.Transactions.Queries.GetTransaction
             var transactionIndexAsset = await _context.TransactionIndexs.FindAsync(request.TransactionIndexId);
 
             //Get Transaction Detail
-            var transactionAsset = _context.Transactions
-                .Where(x => x.TransactionIndexId == transactionIndexAsset.Id);
+            var transactionAsset = await _context.Transactions
+                .Where(x => x.TransactionIndexId == transactionIndexAsset.Id)
+                .ToListAsync();
 
             var transactionDto = transactionAsset.Select(x => new GetTransactionDto
             {
                 ProductId = x.ProductId,
                 ProductName = x.ProductName,
-                ProductImage = x.ImageUrl,
+                ProductImageUrl = x.ImageUrl,
+                ProductImageName = x.ImageName,
                 ProductCount = x.Quantity,
-                ProductPrice = ToRupiah(Convert.ToInt32(x.Price)),
-                TotalProductPrice = ToRupiah(x.TotalPrice)
+                ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.Price)),
+                TotalProductPrice = ConvertRupiah.ConvertToRupiah(x.TotalPrice)
             });
 
             //Get Payment Method 
-            var paymentAsset = _context.Payments
+            var paymentAsset = await _context.Payments
                 .Where(x => x.Id == transactionIndexAsset.PaymentId)
                 .Include(x => x.AvailableBank)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             var paymentDto = new GetTransactionPaymentDto
             {
@@ -62,23 +65,23 @@ namespace Application.Transactions.Queries.GetTransaction
             };
 
             //Get Shipping Method
-            var shippingAsset = _context.Shipments
+            var shippingAsset = await _context.Shipments
                 .Where(x => x.Id == transactionIndexAsset.ShipmentId)
                 .Include(x => x.AvailableShipment)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
             var shippingCost = shippingAsset.AvailableShipment.ShipmentCost;
 
             var shippingDto = new GetTransactionShippingDto
             {
                 ShippingMethodId = shippingAsset.Id,
                 ShippingName = shippingAsset.AvailableShipment.ShipmentName,
-                ShippingCost = ToRupiah(Convert.ToInt32(shippingCost))
+                ShippingCost = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(shippingCost))
             };
 
             //Get Store
-            var store = _context.Stores
+            var store = await _context.Stores
                 .Where(x => x.Id == transactionIndexAsset.StoreId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             var storeDto = new GetTransactionStoreDto
             {
@@ -93,13 +96,13 @@ namespace Application.Transactions.Queries.GetTransaction
             var transactionIndexDto = new GetTransactionIndexDto
             {
                 Id = transactionIndexAsset.Id,
-                TotalTransactionPrice = ToRupiah(totalTransactionPrice),
+                TotalTransactionPrice = ConvertRupiah.ConvertToRupiah(totalTransactionPrice),
                 Store = storeDto,
                 ShippingMethod = shippingDto,
                 PaymentMethod = paymentDto,
                 Note = transactionIndexAsset.Note,
                 ShippingAddress = transactionIndexAsset.ShippingAddress,
-                Lists = await transactionDto.ToListAsync(),
+                Lists = transactionDto.ToList(),
                 Status = (int)transactionIndexAsset.Status
             };
 
@@ -130,11 +133,6 @@ namespace Application.Transactions.Queries.GetTransaction
             return context.Products
                 .Where(x => x.Id == productId)
                 .FirstOrDefault();
-        }
-
-        private static string ToRupiah(int price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
         }
     }
 }

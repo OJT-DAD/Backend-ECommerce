@@ -3,7 +3,7 @@
     public class GetNewSellerDetailDto
     {
         public int Id { get; set; }
-        public int UserPropertyId { get; set; }
+        public int UserId { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
@@ -14,5 +14,7 @@
         public string StoreAddress { get; set; }
         public string StoreContact { get; set; }
         public string DateRequest { get; set; }
+        public string DateApprovalResult { get; set; }
+        public string ApprovalResult { get; set; }
     }
 }

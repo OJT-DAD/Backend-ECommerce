@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,8 @@ namespace Application.Carts.Queries.GetCartDetail
 
         public async Task<GetCartDetailVm>  Handle(GetCartDetailQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.CartIndexs.Any(x => x.Id == request.CartIndexId))
+            var validationExist = await _context.CartIndexs.AnyAsync(x => x.Id == request.CartIndexId);
+            if (!validationExist)
                 throw new NotFoundException(nameof(CartIndex), request.CartIndexId);
 
             var cartIndexAsset = await _context.CartIndexs
@@ -37,27 +39,30 @@ namespace Application.Carts.Queries.GetCartDetail
                 .Include(x => x.Store)
                 .FirstOrDefaultAsync();
 
-            var cartListAsset = _context.Carts
-                .Where(x => x.CartIndexId == request.CartIndexId);
+            var cartListAsset = await _context.Carts
+                .Where(x => x.CartIndexId == request.CartIndexId)
+                .ToListAsync();
 
             var cartDto = cartListAsset.Select(x => new GetCartDetailDto
             {
                 Id = x.Id,
                 ProductId = x.ProductId,
                 ProductName = ProductAsset(x.ProductId, _context).Name,
-                ProductPrice = ToRupiah(Convert.ToInt32(ProductAsset(x.ProductId, _context).Price)),
+                ProductImageName = ProductAsset(x.ProductId, _context).ImageName,
+                ProductImageUrl = ProductAsset(x.ProductId, _context).ImageUrl,
+                ProductPrice = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(ProductAsset(x.ProductId, _context).Price)),
                 Quantity = x.Quantity,
-                TotalPrice = ToRupiah(x.TotalPrice)
+                TotalPrice = ConvertRupiah.ConvertToRupiah(x.TotalPrice)
             });
 
 
             //Shipping Cost Value
             var shippingCost = 0;
 
-            var shippingAsset = _context.Shipments
+            var shippingAsset = await _context.Shipments
                 .Where(x => x.Id == cartIndexAsset.ShipmentId)
                 .Include(x => x.AvailableShipment)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if(shippingAsset != null)
             {
@@ -68,10 +73,14 @@ namespace Application.Carts.Queries.GetCartDetail
             var model = new GetCartDetailIndexDto
             {
                 Id = request.CartIndexId,
+                StoreId = cartIndexAsset.StoreId,
                 StoreName = cartIndexAsset.Store.Name,
-                ShippingCost = ToRupiah(shippingCost),
-                TotalCartPrice = ToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
-                Lists = await cartDto.ToListAsync()
+                ShippingCost = ConvertRupiah.ConvertToRupiah(shippingCost),
+                TotalCost = ConvertRupiah.ConvertToRupiah(TotalCost(request.CartIndexId,_context)),
+                PaymentId = cartIndexAsset.PaymentId,
+                ShippingId = cartIndexAsset.ShipmentId,
+                FinalTotalCost = ConvertRupiah.ConvertToRupiah(TotalCartPrice(request.CartIndexId, _context, shippingCost)),
+                Lists = cartDto.ToList()
             };
 
             return new GetCartDetailVm
@@ -88,6 +97,22 @@ namespace Application.Carts.Queries.GetCartDetail
                 .FirstOrDefault();
         }
 
+        private static int TotalCost(int cartIndexId, IApplicationDbContext context)
+        {
+            var totalCost = 0;
+
+            var cartAsset = context.Carts
+                .Where(x => x.CartIndexId == cartIndexId);
+
+            foreach(var price in cartAsset)
+            {
+                var a = totalCost;
+                totalCost = a + price.TotalPrice;
+            }
+
+            return totalCost;
+        }
+
         private static int TotalCartPrice(int id, IApplicationDbContext _context, decimal shippingCost)
         {
             int totalCartPrice = 0;
@@ -102,11 +127,6 @@ namespace Application.Carts.Queries.GetCartDetail
             }
 
             return totalCartPrice + Convert.ToInt32(shippingCost);
-        }
-
-        private static string ToRupiah(int price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
         }
     }
 }

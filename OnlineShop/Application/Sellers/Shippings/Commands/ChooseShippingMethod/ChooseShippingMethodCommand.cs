@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Entities.Admin;
 using Domain.Entities.Seller;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +31,11 @@ namespace Application.Sellers.Shippings.Commands.ChooseShippingMethod
 
         public async Task<string> Handle(ChooseShippingMethodCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.AvailableShipments.Any(x => x.Id == request.ShippingMethodId))
+            var validationExist1 = await _context.AvailableShipments.AnyAsync(x => x.Id == request.ShippingMethodId);
+            var validationExist2 = await _context.Stores.AnyAsync(x => x.Id == request.StoreId);
+            if (!validationExist1)
                 throw new NotFoundException(nameof(AvailableShipment), request.ShippingMethodId);
-            if (!_context.Stores.Any(x => x.Id == request.StoreId))
+            if (!validationExist2)
                 throw new NotFoundException(nameof(Store), request.StoreId);
 
             var entity = new Shipment

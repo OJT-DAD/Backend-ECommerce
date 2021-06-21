@@ -11,21 +11,9 @@ namespace Application.Admins.Commands.AvailableShipments.CreateAvailableShipment
 {
     public class CreateAvailableShipmentCommandValidator : AbstractValidator<CreateAvailableShipmentCommand>
     {
-        private readonly IApplicationDbContext _context;
-
-        public CreateAvailableShipmentCommandValidator(IApplicationDbContext context)
-        {
-            _context = context;
-
+        public CreateAvailableShipmentCommandValidator() {
             RuleFor(x => x.ShipmentName)
-                .NotEmpty().WithMessage("The shipping method name is required")
-                .MustAsync(BeUnique).WithMessage("There is already a shipping method with the same name in the database");
-        }
-
-        private async Task<bool> BeUnique(string shipmentName, CancellationToken cancellationToken)
-        {
-            return await _context.AvailableShipments
-                .AllAsync(x => x.ShipmentName != shipmentName);
+                .NotEmpty().WithMessage("The shipping method name is required");
         }
     }
 }

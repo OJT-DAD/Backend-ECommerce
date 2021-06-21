@@ -26,18 +26,16 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CartIndexId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShippingAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TransactionIndexId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TransactionIndexId");
 
                     b.ToTable("AdditionalDatas");
                 });
@@ -136,6 +134,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ApprovalResult")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateApprovalResult")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateRequest")
                         .HasColumnType("datetime2");
 
@@ -174,7 +178,10 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("PaymentSlipImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentSlipImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TransactionIndexId")
@@ -194,7 +201,13 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("DateAddedOrUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
@@ -222,6 +235,9 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -398,6 +414,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -433,11 +452,17 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
 
                     b.Property<int>("ShipmentId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ShippingAddress")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -483,20 +508,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("UserProperties");
-                });
-
-            modelBuilder.Entity("Domain.Entities.AdditionalData", b =>
-                {
-                    b.HasOne("Domain.Entities.TransactionIndex", "TransactionIndex")
-                        .WithMany()
-                        .HasForeignKey("TransactionIndexId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Cart", b =>

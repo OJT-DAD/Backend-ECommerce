@@ -25,7 +25,8 @@ namespace Application.Admins.Queries.Banks.GetAllBank
 
         public async Task<GetAllBankVm> Handle(GetAllBankQuery request, CancellationToken cancellationToken)
         {
-            var asset = _context.AvailableBanks;
+            var asset = await _context.AvailableBanks
+                .ToListAsync();
             
             var dto = asset.Select(x => new GetAllBankDto
             {
@@ -36,7 +37,7 @@ namespace Application.Admins.Queries.Banks.GetAllBank
 
             return new GetAllBankVm
             {
-                Banks = await dto.ToListAsync(cancellationToken)
+                Banks = dto.ToList()
             };
         }
 

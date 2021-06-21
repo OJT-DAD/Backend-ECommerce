@@ -1,10 +1,13 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
+using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -20,13 +23,18 @@ namespace Application.UserManagements.Commands.LoginUser
 
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, UserLoginSuccessDto>
     {
+        private readonly IApplicationDbContext _context;
         private readonly IUserManagement _userService;
         private readonly AppSettingUsers _appSettings;
 
-        public LoginUserCommandHandler(IUserManagement userService, IOptions<AppSettingUsers> appSettings)
+        public LoginUserCommandHandler(
+            IUserManagement userService, 
+            IOptions<AppSettingUsers> appSettings,
+            IApplicationDbContext context)
         {
             _userService = userService;
             _appSettings = appSettings.Value;
+            _context = context;
         }
 
         public async Task<UserLoginSuccessDto> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -60,10 +68,26 @@ namespace Application.UserManagements.Commands.LoginUser
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Username = user.Username,
-                Token = tokenString
+                Token = tokenString,
+                Role = user.Role,
+                StoreId = StoreAsset(user.Id, user.Role, _context)
             };
             // return basic user info and authentication token
             return entity;
+        }
+
+        private static int StoreAsset(int id, string role, IApplicationDbContext context)
+        {
+            if(role == Role.Seller)
+            {
+                var storeAsset = context.Stores
+                    .Where(x => x.UserPropertyId == id)
+                    .FirstOrDefault();
+
+                return storeAsset.Id;
+            }
+
+            return 0;
         }
     }
 }

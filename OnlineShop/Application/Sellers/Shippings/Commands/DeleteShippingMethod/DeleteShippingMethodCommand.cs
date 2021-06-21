@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Domain.Entities.Seller;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,8 @@ namespace Application.Sellers.Shippings.Commands.DeleteShippingMethod
 
         public async Task<string> Handle(DeleteShippingMethodCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.Shipments.Any(x => x.Id == request.Id))
+            var validationExist = await _context.Shipments.AnyAsync(x => x.Id == request.Id);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Shipment), request.Id);
 
             var entity = await _context.Shipments.FindAsync(request.Id);

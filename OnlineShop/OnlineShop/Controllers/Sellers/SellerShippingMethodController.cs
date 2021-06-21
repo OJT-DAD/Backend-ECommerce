@@ -1,18 +1,21 @@
-﻿using Application.Sellers.Shippings.Commands.ChooseShippingMethod;
+﻿using Application.Common.Models;
+using Application.Sellers.Shippings.Commands.ChooseShippingMethod;
 using Application.Sellers.Shippings.Commands.DeleteShippingMethod;
 using Application.Sellers.Shippings.Queries.GetShippingMethod;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace OnlineShop.Controllers
 {
+    [Authorize]
     [Route("seller/shipping-method")]
     public class SellerShippingMethodController : ApiControllerBase
     {
-        [HttpGet]
-        public async Task<GetShippingMethodVm> Get([FromQuery] GetShippingMethodQuery query)
+        [HttpGet("{storeId}")]
+        public async Task<GetShippingMethodVm> Get(int storeId)
         {
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetShippingMethodQuery { StoreId = storeId });
         }
 
         [HttpPost]

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,24 +27,20 @@ namespace Application.Admins.Queries.AvailableShipments.GetAllAvailableShipment
 
         public async Task<GetAllAvailableShipmentVm> Handle(GetAllAvailableShipmentQuery request, CancellationToken cancellationToken)
         {
-            var entity = _context.AvailableShipments;
+            var entity = await _context.AvailableShipments
+                .ToListAsync();
 
             var dto = entity.Select(x => new GetAllAvailableShipmentDto
             {
                 Id = x.Id,
                 ShippingMethodName = x.ShipmentName,
-                ShippingCost = ToRupiah(Convert.ToInt32(x.ShipmentCost))
+                ShippingCost = ConvertRupiah.ConvertToRupiah(Convert.ToInt32(x.ShipmentCost))
             });
 
             return new GetAllAvailableShipmentVm
             {
-                AvailableShippingMethods = await dto.ToListAsync()
+                AvailableShippingMethods = dto.ToList()
             };
-        }
-
-        private static string ToRupiah(int price)
-        {
-            return String.Format(CultureInfo.CreateSpecificCulture("id-id"), "Rp. {0:N}", price);
         }
     }
 }

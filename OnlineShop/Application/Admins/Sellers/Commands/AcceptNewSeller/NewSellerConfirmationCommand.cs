@@ -1,7 +1,10 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Admins.Sellers.Commands;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,8 +49,17 @@ namespace Application.Admins.Commands.Sellers.AcceptNewSeller
             };
 
             _context.Stores.Add(entity);
+            
+            //Set Role from USER to SELLER
+            var userRoleAsset = await _context.UserProperties
+                .Where(x => x.Id == asset.UserPropertyId)
+                .FirstOrDefaultAsync();
 
-            //Remove new Seller from table
+            userRoleAsset.Role = Role.Seller;
+
+            asset.DateApprovalResult = DateTime.Now;
+            asset.ApprovalResult = Model.Approved;
+
             _context.NewSellers.Remove(asset);
 
             await _context.SaveChangesAsync(cancellationToken);

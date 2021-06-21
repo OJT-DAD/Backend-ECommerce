@@ -22,7 +22,8 @@ namespace Application.Stores.Queries.GetAllStore
 
         public async Task<GetAllStoreVm> Handle(GetAllStoreQueries request, CancellationToken cancellationToken)
         {
-            var asset = _context.Stores;
+            var asset = await _context.Stores
+                .ToListAsync();
 
             var dto = asset.Select(x => new GetAllStoreDto
             {
@@ -36,7 +37,7 @@ namespace Application.Stores.Queries.GetAllStore
 
             return new GetAllStoreVm
             {
-                Stores = await dto.ToListAsync()
+                Stores = dto.ToList()
             };
         }
     }

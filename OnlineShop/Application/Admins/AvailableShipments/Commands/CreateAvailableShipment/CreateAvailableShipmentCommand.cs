@@ -1,6 +1,8 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 using Domain.Entities.Admin;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,6 +28,12 @@ namespace Application.Admins.Commands.AvailableShipments.CreateAvailableShipment
 
         public async Task<string> Handle(CreateAvailableShipmentCommand request, CancellationToken cancellationToken)
         {
+            //unique validation
+            var uniqueValidation = await _context.AvailableShipments
+                .AllAsync(x => x.ShipmentName == request.ShipmentName);
+            if (uniqueValidation)
+                throw new AppException("Shipment name u input alredy exist!");
+
             var entity = new AvailableShipment
             {
                 ShipmentName = request.ShipmentName,

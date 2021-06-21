@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.UserManagements.Commands.LoginUser;
 using Application.UserManagements.Commands.UpdateUser;
 using Application.UserManagements.Queries.GetUserById;
 using AutoMapper;
@@ -63,6 +64,17 @@ namespace Infrastructure.Services
 
         public async Task<UserProperty> Create(UserProperty user, string password, CancellationToken cancellationToken)
         {
+            //unique username validation
+            var uniqueUsernameValidation = await _context.UserProperties
+                .AllAsync(x => x.Username == user.Username);
+            if (uniqueUsernameValidation)
+                throw new AppException("Username alredy exist!");
+            //unique email validation
+            var uniqueEmailValidation = await _context.UserProperties
+                .AllAsync(x => x.Email == user.Email);
+            if (uniqueEmailValidation)
+                throw new AppException("Email alredy exist!");
+
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PasswordHash = passwordHash;
@@ -112,10 +124,25 @@ namespace Infrastructure.Services
                 throw new NotFoundException("User not found");
 
             //input change
-            user.Username = userParam.Username;
-            user.FirstName = userParam.FirstName;
-            user.LastName = userParam.LastName;
-            user.Email = userParam.Email;
+            if (userParam.Username != "" && userParam.Username != user.Username)
+            {
+                if(await _context.UserProperties.AllAsync(x => x.Username != userParam.Username))
+                {
+                    user.Username = userParam.Username;
+                }
+            }
+            
+            if(userParam.FirstName != "" && userParam.FirstName != user.FirstName)
+                user.FirstName = userParam.FirstName;
+
+            if (userParam.LastName != "" && userParam.LastName != user.LastName)
+                user.LastName = userParam.LastName;
+
+            if (userParam.Email != "" && userParam.Email != user.Email)
+                if (await _context.UserProperties.AllAsync(x => x.Email != userParam.Email))
+                {
+                    user.Email = userParam.Email;
+                }
 
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))
@@ -135,7 +162,8 @@ namespace Infrastructure.Services
                 LastName = userParam.LastName,
                 Username = userParam.Username,
                 Email = userParam.Email,
-                Password = password
+                Password = password,
+                Role = userParam.Role
             };
 
             return model;

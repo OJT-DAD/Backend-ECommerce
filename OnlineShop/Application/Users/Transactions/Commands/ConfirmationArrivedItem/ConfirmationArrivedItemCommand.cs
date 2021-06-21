@@ -59,14 +59,15 @@ namespace Application.Users.Transactions.Commands.ConfirmationArrivedItem
                 await _context.SaveChangesAsync(cancellationToken);
 
                 //Get transaction asset
-                var transactionAsset = _context.Transactions
-                    .Where(x => x.TransactionIndexId == request.TranscationIndexId);
+                var transactionAsset = await _context.Transactions
+                    .Where(x => x.TransactionIndexId == request.TranscationIndexId)
+                    .ToListAsync();
 
                 foreach(var data in transactionAsset)
                 {
-                    var productAsset = _context.Products
+                    var productAsset = await _context.Products
                         .Where(x => x.Id == data.ProductId)
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
 
                     var purchaseHistoryEntity = new PurchaseHistory
                     {

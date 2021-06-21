@@ -5,15 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Users\Transactions\Commands\CreateTransaction\CreateTransactionCommand.cs~RF6709114.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="AllRoles\Histories\Commands\" />
-    <Folder Include="AllRoles\Histories\Queries\GetAllStoreHistory\" />
-    <Folder Include="AllRoles\Histories\Queries\GetAllUserHistory\" />
     <Folder Include="Common\Extensions\" />
     <Folder Include="Common\Security\" />
+    <Folder Include="Users\Transactions\Commands\CreateTransaction\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="FirebaseAuthentication.net" Version="3.7.1" />
+    <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
     <PackageReference Include="FluentValidation" Version="10.0.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="10.0.2" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />

@@ -18,6 +18,7 @@ namespace OnlineShop.Filters
             // Register known exception types and handlers.
             _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
+                {typeof(AppException), HandleAppException },
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(NotFoundException), HandleNotFoundException },
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
@@ -48,6 +49,18 @@ namespace OnlineShop.Filters
             }
 
             HandleUnknownException(context);
+        }
+        private void HandleAppException(ExceptionContext context)
+        {
+            var exception = context.Exception as AppException;
+            var details = new ProblemDetails()
+            {
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                Title = "Bad request inputed",
+                Detail = exception.Message
+            };
+            context.Result = new BadRequestObjectResult(details);
+            context.ExceptionHandled = true;
         }
         private void HandleValidationException(ExceptionContext context)
         {

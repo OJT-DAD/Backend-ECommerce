@@ -3,6 +3,7 @@ using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,17 +26,41 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
 
         public async Task<GetNewSellerDetailVm> Handle(GetNewSellerDetailQuery request, CancellationToken cancellationToken)
         {
-            if (!_context.NewSellers.Any(x => x.Id == request.Id))
+            var validationExist = await _context.NewSellers.AnyAsync(x => x.Id == request.Id);
+            if (!validationExist)
                 throw new NotFoundException(nameof(NewSeller), request.Id);
 
-            var asset = _context.NewSellers
+            //Delete after 3 days
+            var now = DateTime.Now;
+
+            var newSellerAsset = await _context.NewSellers
+               .Where(x => x.Id == request.Id)
+               .FirstOrDefaultAsync();
+
+            var maxDay = newSellerAsset.DateApprovalResult?.AddDays(3);
+
+            if (now > maxDay)
+            {
+                _context.NewSellers.Remove(newSellerAsset);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new GetNewSellerDetailVm
+                {
+                    Details = null
+                };
+            }
+
+            //If < 3 days shows
+            var asset = await _context.NewSellers
                 .Where(x => x.Id == request.Id)
-                .Include(x => x.UserProperty);
+                .Include(x => x.UserProperty)
+                .ToListAsync();
 
             var dto = asset.Select(x => new GetNewSellerDetailDto
             {
                 Id = x.Id,
-                UserPropertyId = x.UserPropertyId,
+                UserId = x.UserPropertyId,
                 FullName = x.UserProperty.FirstName + " " + x.UserProperty.LastName,
                 Email = x.UserProperty.Email,
                 Username = x.UserProperty.Username,
@@ -45,13 +70,24 @@ namespace Application.Admins.Queries.Sellers.GetNewSellerDetail
                 StoreDescription = x.StoreDescription,
                 StoreAddress = x.StoreAddress,
                 StoreContact = x.StoreContact,
-                DateRequest = x.DateRequest.ToString("dd")
+                DateRequest = x.DateRequest.ToString("dd-MM-yyyy"),
+                DateApprovalResult = DateApprovalResult(x.DateApprovalResult),
+                ApprovalResult = x.ApprovalResult,
             });
 
             return new GetNewSellerDetailVm
             {
-                Details = await dto.FirstOrDefaultAsync()
+                Details = dto.FirstOrDefault()
             };
+        }
+        private static string DateApprovalResult(DateTime? dateApprovalResult)
+        {
+            if (dateApprovalResult != null)
+            {
+                return dateApprovalResult?.ToString("dd");
+            }
+
+            return "Hasnt been approve yet";
         }
     }
 }

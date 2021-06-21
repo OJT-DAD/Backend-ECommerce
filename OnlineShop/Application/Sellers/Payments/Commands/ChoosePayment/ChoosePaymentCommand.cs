@@ -4,6 +4,7 @@ using Domain.Entities;
 using Domain.Entities.Admin;
 using Domain.Entities.Seller;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +32,12 @@ namespace Application.Sellers.Payments.Commands.ChoosePayment
 
         public async Task<string> Handle(ChoosePaymentCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.Stores.Any(x => x.Id == request.StoreId))
+            //Validation exist store and bank
+            var validationExist1 = await _context.Stores.AnyAsync(x => x.Id == request.StoreId);
+            var validationExist2 = await _context.AvailableBanks.AnyAsync(x => x.Id == request.BankId);
+            if (!validationExist1)
                 throw new NotFoundException(nameof(Store), request.StoreId);
-            if (!_context.AvailableBanks.Any(x => x.Id == request.BankId))
+            if (!validationExist2)
                 throw new NotFoundException(nameof(AvailableBank), request.BankId);
 
             var entity = new Payment

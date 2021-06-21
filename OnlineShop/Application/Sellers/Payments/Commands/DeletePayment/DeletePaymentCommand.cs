@@ -2,6 +2,7 @@
 using Application.Common.Interfaces;
 using Domain.Entities.Seller;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,8 @@ namespace Application.Sellers.Payments.Commands.DeletePayment
 
         public async Task<string> Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
         {
-            if (!_context.Payments.Any(x => x.Id == request.Id))
+            var validationExist = await _context.Payments.AnyAsync(x => x.Id == request.Id);
+            if (!validationExist)
                 throw new NotFoundException(nameof(Shipment), request.Id);
 
             var entity = await _context.Payments.FindAsync(request.Id);
